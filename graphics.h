@@ -1,0 +1,95 @@
+#ifndef GRAPHICS_H
+#define GRAPHICS_H
+
+#include <iostream>
+#include <stack>
+using namespace std;
+
+#include "graphics_headers.h"
+#include "camera.h"
+#include "shader.h"
+#include "object.h"
+#include "mesh.h"
+#include "sphere.h"
+
+class Graphics
+{
+public:
+  /**
+   * @brief construct a new Graphics object
+   *
+   */
+  Graphics();
+
+  /**
+   * @brief destroy the Graphics object
+   *
+   */
+  ~Graphics();
+
+  /**
+   * @brief
+   * initialize Camera with params width and height
+   * initialize and add Shaders,and get projection,
+   * view and model matrices from shaders.
+   *
+   * get color and position vectors from the shader
+   * and assign to Graphics object.
+   *
+   * instantiate object assign to m_object, and
+   * initialize it with m_vertPos and m_vertCol.
+   *
+   * enable depth testing.
+   *
+   * @param width
+   * @param height
+   * @return true
+   * @return false
+   */
+  bool Initialize(int width, int height);
+
+  void HierarchicalUpdate2(double dt);
+
+  /**
+   * @brief
+   * clears screen and enables shaders, pass projection
+   * and view matrices to the shader and render the object,
+   * report errors if any occured.
+   */
+  void Render();
+
+  Camera *getCamera();
+
+private:
+  // string to record error message.
+  std::string ErrorString(GLenum error);
+
+  bool collectShPrLocs();
+
+  stack<glm::mat4> modelStack;
+
+  // pointer to Camera object.
+  Camera *m_camera;
+  // pointer to Shader object.
+  Shader *m_shader;
+
+  // GLint to store projection matrix.
+  GLint m_projectionMatrix;
+  // GLint to view projection matrix.
+  GLint m_viewMatrix;
+  // GLint to store model matrix.
+  GLint m_modelMatrix;
+
+  GLint m_positionAttrib;
+  GLint m_colorAttrib;
+  GLint m_tcAttrib;
+  GLint m_hasTexture;
+
+  // changed to vector of object pointers.
+  Object *m_sun;
+  Object *m_planet;
+  Object *m_moon;
+  Object *m_starship;
+};
+
+#endif /* GRAPHICS_H */

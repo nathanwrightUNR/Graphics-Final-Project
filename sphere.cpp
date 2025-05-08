@@ -1,0 +1,111 @@
+#include "sphere.h"
+
+Sphere::Sphere(glm::vec3 color_1, glm::vec3 color_2)
+    : color_1(color_1), color_2(color_2)
+{
+  this->createVertices();
+  this->InitBuffers();
+  this->setupModelMatrix(glm::vec3(0., 0., 0.), 0., 1.);
+}
+
+Sphere::Sphere(int prec)
+{
+  this->prec = prec;
+  createVertices();
+  InitBuffers();
+  setupModelMatrix(glm::vec3(0., 0., 0.), 0., 1.);
+  hasTex = false;
+}
+
+Sphere::Sphere(int prec, const char *fname)
+{
+  this->prec = prec;
+  createVertices();
+  InitBuffers();
+  setupModelMatrix(glm::vec3(0., 0., 0.), 0., 1.);
+
+  // load texture from file
+  m_texture = new Texture(fname);
+  if (m_texture)
+    hasTex = true;
+  else
+    hasTex = false;
+}
+
+void Sphere::createVertices()
+{
+  int prec = 100;
+
+  std::vector<glm::vec2> texCoords;
+  std::vector<glm::vec3> vertices;
+  std::vector<glm::vec3> normals;
+
+  for (int i = 0; i <= prec; i++)
+  {
+    for (int j = 0; j <= prec; j++)
+    {
+      float y = glm::cos(glm::radians(180.f - i * 180.f / prec));
+      float x = -glm::cos(glm::radians(j * 360.f / prec)) * glm::abs(glm::cos(glm::asin(y)));
+      float z = glm::sin(glm::radians(j * 360.f / prec)) * glm::abs(glm::cos(glm::asin(y)));
+
+      vertices.push_back(glm::vec3(x, y, z));
+      texCoords.push_back(glm::vec2((float)j / prec, (float)i / prec));
+      normals.push_back(glm::vec3(x, y, z));
+    }
+  }
+
+  for (int i = 0; i < prec; i++)
+  {
+    for (int j = 0; j < prec; j++)
+    {
+      this->Indices.push_back(i * (prec + 1) + j);
+      this->Indices.push_back(i * (prec + 1) + j + 1);
+      this->Indices.push_back((i + 1) * (prec + 1) + j);
+      this->Indices.push_back(i * (prec + 1) + j + 1);
+      this->Indices.push_back((i + 1) * (prec + 1) + j + 1);
+      this->Indices.push_back((i + 1) * (prec + 1) + j);
+    }
+  }
+
+  for (int i = 0; i < vertices.size(); i++)
+  {
+    this->Vertices.push_back(Vertex(vertices[i], normals[i], texCoords[i]));
+  }
+}
+
+void Sphere::Render(GLint posAttribLoc, GLint colAttribLoc, GLint tcAttribLoc, GLint hasTextureLoc)
+{
+  glBindVertexArray(vao);
+  // Enable vertex attibute arrays for each vertex attrib
+  glEnableVertexAttribArray(posAttribLoc);
+  glEnableVertexAttribArray(colAttribLoc);
+  glEnableVertexAttribArray(tcAttribLoc);
+
+  // Bind your VBO
+  glBindBuffer(GL_ARRAY_BUFFER, VB);
+
+  // Set vertex attribute pointers to the load correct data. Update here to load the correct attributes.
+  glVertexAttribPointer(posAttribLoc, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)offsetof(Vertex, vertex));
+  glVertexAttribPointer(colAttribLoc, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)offsetof(Vertex, normal));
+  glVertexAttribPointer(tcAttribLoc, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)offsetof(Vertex, texcoord));
+
+  // If has texture, set up texture unit(s): update here for texture rendering
+  if (m_texture != NULL)
+  {
+    glUniform1i(hasTextureLoc, true);
+  }
+  else
+    glUniform1i(hasTextureLoc, false);
+
+  // Bind your Element Array
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IB);
+
+  // Render
+  glDrawElements(GL_TRIANGLES, Indices.size(), GL_UNSIGNED_INT, 0);
+
+  // Disable vertex arrays
+  glDisableVertexAttribArray(posAttribLoc);
+  glDisableVertexAttribArray(colAttribLoc);
+  glDisableVertexAttribArray(tcAttribLoc);
+  glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
