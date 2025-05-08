@@ -84,6 +84,8 @@ bool Graphics::Initialize(int width, int height)
 
   m_saturn = new Sphere(64, "../assets/Planetary Textures/Saturn.jpg");
 
+  m_saturn_ring = new Ring(128, 1.3, 2, "../assets/Planetary Textures/Saturn_ring.png");
+
   m_uranus = new Sphere(64, "../assets/Planetary Textures/Uranus.jpg");
 
   m_uranus = new Sphere(64, "../assets/Planetary Textures/Neptune.jpg");
@@ -169,6 +171,18 @@ void Graphics::Update(double dt)
 
   if (m_saturn != NULL)
     m_saturn->Update(localTransform);
+
+  // position of saturn ring
+  dist = {0, 0, 0};
+  localTransform = this->modelStack.top();
+  localTransform *= glm::translate(glm::mat4(1.f),
+                                   glm::vec3(dist[0], dist[1], dist[2]));
+  this->modelStack.push(localTransform);
+  localTransform *= glm::rotate(glm::mat4(1.f), glm::radians(-90.f), glm::vec3(1, 0, 0));
+  if (m_saturn_ring != NULL)
+    m_saturn_ring->Update(localTransform);
+
+  this->modelStack.pop();
 
   // position of uranus
   dist = {5., 0, 0};
@@ -339,6 +353,23 @@ void Graphics::Render()
       }
       glUniform1i(sampler, 0);
       m_saturn->Render(m_positionAttrib, m_colorAttrib, m_tcAttrib, m_hasTexture);
+    }
+  }
+
+  if (m_saturn_ring != NULL)
+  {
+    glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_saturn_ring->GetModel()));
+    if (m_saturn_ring->hasTex)
+    {
+      glActiveTexture(GL_TEXTURE0);
+      glBindTexture(GL_TEXTURE_2D, m_saturn_ring->getTextureID());
+      GLuint sampler = m_shader->GetUniformLocation("sp");
+      if (sampler == INVALID_UNIFORM_LOCATION)
+      {
+        printf("Sampler Not found not found\n");
+      }
+      glUniform1i(sampler, 0);
+      m_saturn_ring->Render(m_positionAttrib, m_colorAttrib, m_tcAttrib, m_hasTexture);
     }
   }
 

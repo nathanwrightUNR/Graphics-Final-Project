@@ -21,7 +21,7 @@ bool Texture::loadTexture(const char *texFile)
     printf("Failed: Could not open texture file!\n");
     return false;
   }
-  return true;
+  return initializeTexture();
 }
 
 bool Texture::initializeTexture()

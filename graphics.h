@@ -11,6 +11,7 @@ using namespace std;
 #include "object.h"
 #include "mesh.h"
 #include "sphere.h"
+#include "ring.h"
 
 class Graphics
 {
@@ -93,6 +94,7 @@ private:
   Object *m_mars;
   Object *m_jupiter;
   Object *m_saturn;
+  Object *m_saturn_ring;
   Object *m_uranus;
   Object *m_neptune;
 
