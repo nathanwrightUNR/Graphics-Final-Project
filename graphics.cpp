@@ -91,32 +91,20 @@ void Graphics::HierarchicalUpdate2(double dt)
   glm::mat4 localTransform;
 
   // position of the sun
-  this->modelStack.push(glm::translate(glm::mat4(1.f), glm::vec3(0, 0, 0))); // sun's coordinate
-  localTransform = this->modelStack.top();                                   // The sun origin
-  localTransform *= glm::rotate(glm::mat4(1.0f), (float)dt, glm::vec3(0.f, 1.f, 0.f));
-  localTransform *= glm::scale(glm::vec3(.75, .75, .75));
+  this->modelStack.push(glm::translate(glm::mat4(1.f), glm::vec3(0, 0, 0)));
+  localTransform = this->modelStack.top();
+
   if (m_sun != NULL)
     m_sun->Update(localTransform);
 
   // position of the starship
-  speed = {0, 1, 1};
-  dist = {0, 3.25, 3.25};
-  rotVector = {0., 0., 0.};
-  rotSpeed = {.0, .0, .0};
-  scale = {.02f, .02f, .02f};
+  dist = {3.25, 0, 0};
   localTransform = this->modelStack.top();
   localTransform *= glm::translate(glm::mat4(1.f),
-                                   glm::vec3(0.f,
-                                             cos(speed[1] * dt) * dist[1],
-                                             sin(speed[2] * dt) * dist[2]));
-  this->modelStack.push(localTransform);
+                                   glm::vec3(dist[0], dist[1], dist[2]));
 
-  glm::vec3 starship_pos = glm::vec3(localTransform[3]);
-  glm::vec3 sun_pos = glm::vec3(0.f, 0.f, 0.f);
-  glm::vec3 to_sun = sun_pos - starship_pos;
-  float angle = glm::atan(to_sun.y, to_sun.z);
-  localTransform *= glm::rotate(glm::mat4(1.f), -angle, glm::vec3(1.f, 0.f, 0.f));
-  localTransform *= glm::scale(glm::vec3(scale[0], scale[1], scale[2]));
+  localTransform *= glm::scale(glm::vec3(0.01f));
+  this->modelStack.push(localTransform);
 
   if (m_starship != NULL)
     m_starship->Update(localTransform);
@@ -124,45 +112,29 @@ void Graphics::HierarchicalUpdate2(double dt)
   this->modelStack.pop();
 
   // position of the planet
-  speed = {1., 0., 1.};
-  dist = {6., 0, 6.};
-  rotVector = {1., 1., 1.};
-  rotSpeed = {1., 1., 1.};
-  scale = {.5, .5, .5};
+  dist = {6., 0, 0};
   localTransform = this->modelStack.top();
   localTransform *= glm::translate(glm::mat4(1.f),
-                                   glm::vec3(cos(speed[0] * dt) * dist[0],
-                                             0.f,
-                                             sin(speed[2] * dt) * dist[2]));
+                                   glm::vec3(dist[0], dist[1], dist[2]));
   this->modelStack.push(localTransform);
-  localTransform *= glm::rotate(glm::mat4(1.f), rotSpeed[0] * (float)dt, rotVector);
-  localTransform *= glm::scale(glm::vec3(scale[0], scale[1], scale[2]));
+
   if (m_planet != NULL)
     m_planet->Update(localTransform);
 
   // position of the moon
-  speed = {1., 0., 1.};
-  dist = {1.25, 0, 1.25};
-  rotVector = {1., 1., 1.};
-  rotSpeed = {1., 1., 1.};
-  scale = {.2, .2, .2};
+  dist = {5., 0, 0};
   localTransform = this->modelStack.top();
-  localTransform *= glm::rotate(glm::mat4(1.f), glm::radians(35.f), glm::vec3(1.f, 0.f, 0.f));
   localTransform *= glm::translate(glm::mat4(1.f),
-                                   glm::vec3(cos(speed[0] * dt) * dist[0],
-                                             0.f,
-                                             sin(speed[2] * dt) * dist[2]));
+                                   glm::vec3(dist[0], dist[1], dist[2]));
   this->modelStack.push(localTransform);
-  localTransform *= glm::rotate(glm::mat4(1.f), rotSpeed[0] * (float)dt, rotVector);
-  localTransform *= glm::scale(glm::vec3(scale[0], scale[1], scale[2]));
   if (m_moon != NULL)
     m_moon->Update(localTransform);
 
-  this->modelStack.pop(); // back to the sun coordinate
+  this->modelStack.pop();
 
-  this->modelStack.pop(); // pop planet
+  this->modelStack.pop();
 
-  this->modelStack.pop(); // empy stack
+  this->modelStack.pop();
 }
 
 void Graphics::Render()
