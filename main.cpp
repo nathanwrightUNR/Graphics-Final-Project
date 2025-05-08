@@ -15,7 +15,7 @@ int main(int argc, char **argv)
 {
 
 	// instantiate the engine, with window name w and h.
-	Engine *engine = new Engine("Wright-PA5", 800, 600);
+	Engine *engine = new Engine("Wright-Konstantinov-Final-Project", 800, 600);
 
 	// if initialization fails, print error message and clean up.
 	if (!engine->Initialize())
