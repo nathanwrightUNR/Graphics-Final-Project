@@ -1,15 +1,6 @@
 #include "sphere.h"
 
-Sphere::Sphere(int prec)
-{
-  this->prec = prec;
-  createVertices();
-  InitBuffers();
-  setupModelMatrix(glm::vec3(0., 0., 0.), 0., 1.);
-  hasTex = false;
-}
-
-Sphere::Sphere(int prec, const char *fname)
+Sphere::Sphere(int prec, const char *tf)
 {
   this->prec = prec;
   createVertices();
@@ -17,11 +8,34 @@ Sphere::Sphere(int prec, const char *fname)
   setupModelMatrix(glm::vec3(0., 0., 0.), 0., 1.);
 
   // load texture from file
-  m_texture = new Texture(fname);
+  m_texture = new Texture(tf);
   if (m_texture)
     hasTex = true;
   else
     hasTex = false;
+
+  hasNmap = false;
+}
+
+Sphere::Sphere(int prec, const char *tf, const char *nf)
+{
+  this->prec = prec;
+  createVertices();
+  InitBuffers();
+  setupModelMatrix(glm::vec3(0., 0., 0.), 0., 1.);
+
+  // load texture from file
+  m_texture = new Texture(tf);
+  if (m_texture)
+    hasTex = true;
+  else
+    hasTex = false;
+
+  m_normal_map = new Texture(nf);
+  if (m_normal_map)
+    hasNmap = true;
+  else
+    hasNmap = false;
 }
 
 void Sphere::createVertices()

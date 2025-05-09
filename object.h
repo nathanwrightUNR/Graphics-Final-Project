@@ -33,7 +33,9 @@ public:
 
   void setupModelMatrix(glm::vec3 pivotLoc, float angle, float scale);
 
-  void Render(GLint posAttribLoc, GLint colAttribLoc, GLint tcAttribLoc, GLint hasTex);
+  void Render(GLint posAttribLoc, GLint colAttribLoc,
+              GLint tcAttribLoc, GLint hasTex,
+              GLint nmAttribLoc, GLint hasNmap);
 
   /**
    * @brief get the model.
@@ -42,10 +44,10 @@ public:
    */
   glm::mat4 GetModel();
 
-  bool hasTex;
+  bool hasTex = false;
   GLuint getTextureID() { return m_texture ? m_texture->getTextureID() : 0; }
 
-  bool is_lit = true;
+  bool hasNmap = false;
   GLuint getNormalMapID() { return m_normal_map ? m_normal_map->getTextureID() : 0; }
 
 protected:

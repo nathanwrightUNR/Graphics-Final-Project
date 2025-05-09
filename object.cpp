@@ -19,29 +19,36 @@ glm::mat4 Object::GetModel()
 	return model;
 }
 
-void Object::Render(GLint posAttribLoc, GLint colAttribLoc, GLint tcAttribLoc, GLint hasTextureLoc)
+void Object::Render(GLint posAttribLoc, GLint colAttribLoc,
+										GLint tcAttribLoc, GLint hasTextureLoc,
+										GLint nmAttribLoc, GLint hasNmap)
 {
 	glBindVertexArray(vao);
 	// Enable vertex attibute arrays for each vertex attrib
 	glEnableVertexAttribArray(posAttribLoc);
-	glEnableVertexAttribArray(colAttribLoc);
 	glEnableVertexAttribArray(tcAttribLoc);
+	glEnableVertexAttribArray(nmAttribLoc);
 
 	// Bind your VBO
 	glBindBuffer(GL_ARRAY_BUFFER, VB);
 
 	// Set vertex attribute pointers to the load correct data. Update here to load the correct attributes.
 	glVertexAttribPointer(posAttribLoc, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)offsetof(Vertex, vertex));
-	glVertexAttribPointer(colAttribLoc, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)offsetof(Vertex, normal));
 	glVertexAttribPointer(tcAttribLoc, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)offsetof(Vertex, texcoord));
+	glVertexAttribPointer(nmAttribLoc, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)offsetof(Vertex, normal));
 
 	// If has texture, set up texture unit(s): update here for texture rendering
 	if (m_texture != NULL)
-	{
 		glUniform1i(hasTextureLoc, true);
-	}
+
 	else
 		glUniform1i(hasTextureLoc, false);
+
+	if (m_normal_map != NULL)
+		glUniform1i(hasNmap, true);
+
+	else
+		glUniform1i(hasNmap, false);
 
 	// Bind your Element Array
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IB);
@@ -51,8 +58,9 @@ void Object::Render(GLint posAttribLoc, GLint colAttribLoc, GLint tcAttribLoc, G
 
 	// Disable vertex arrays
 	glDisableVertexAttribArray(posAttribLoc);
-	glDisableVertexAttribArray(colAttribLoc);
 	glDisableVertexAttribArray(tcAttribLoc);
+	glDisableVertexAttribArray(nmAttribLoc);
+
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 

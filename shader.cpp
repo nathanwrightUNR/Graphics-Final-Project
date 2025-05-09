@@ -40,51 +40,58 @@ bool Shader::AddShader(GLenum ShaderType)
   if (ShaderType == GL_VERTEX_SHADER)
   {
     s = "#version 410\n \
-        \
-        layout (location = 0) in vec3 v_position; \
-        layout (location = 1) in vec3 v_color; \
-        layout (location = 2) in vec2 v_tc;  \
-           \
-        out vec3 color; \
-        out vec2 tc;\
-        \
-        uniform mat4 projectionMatrix; \
-        uniform mat4 viewMatrix; \
-        uniform mat4 modelMatrix; \
-        uniform bool hasTexture;        \
-        uniform sampler2D sp; \
-        \
-        void main(void) \
-        { \
-          vec4 v = vec4(v_position, 1.0); \
-          gl_Position = (projectionMatrix * viewMatrix * modelMatrix) * v; \
-          color = v_color; \
-          tc = v_tc;\
-        } \
-        ";
+      \
+      layout (location = 0) in vec3 v_position; \
+      layout (location = 1) in vec2 v_tc;  \
+      layout (location = 2) in vec3 v_normal; \
+      \
+      out vec3 varNorm; \
+      out vec2 tc; \
+      \
+      uniform mat4 projectionMatrix; \
+      uniform mat4 viewMatrix; \
+      uniform mat4 modelMatrix; \
+      uniform mat3 normMatrix; \
+      \
+      void main(void) \
+      { \
+        vec4 v = vec4(v_position, 1.0); \
+        gl_Position = projectionMatrix * viewMatrix * modelMatrix * v; \
+        varNorm = normMatrix * v_normal; \
+        tc = v_tc; \
+      } \
+      ";
   }
   else if (ShaderType == GL_FRAGMENT_SHADER)
   {
     s = "#version 410\n \
-        \
-        uniform sampler2D sp; \
-        \
-        in vec3 color; \
-        in vec2 tc;\
-        uniform bool hasTexture;\
-        \
-        out vec4 frag_color; \
-        \
-        void main(void) \
-        { \
-           if(hasTexture)\
-             frag_color = texture(sp, tc);\
-          \
-          else \
-            frag_color = vec4(color, 1.0);\
-        } \
-        ";
+      \
+      uniform sampler2D sp; \
+      uniform sampler2D samp1; \
+      uniform bool hasTexture; \
+      uniform bool hasNormalMap; \
+      \
+      in vec2 tc; \
+      in vec3 varNorm; \
+      \
+      out vec4 frag_color; \
+      \
+      void main(void) \
+      { \
+        vec3 N; \
+        if (hasNormalMap) \
+          N = normalize(varNorm + texture(samp1, tc).xyz * 2.0 - 1.0); \
+        else \
+          N = normalize(varNorm); \
+      \
+        if (hasTexture) \
+          frag_color = texture(sp, tc); \
+        else \
+          frag_color = vec4(1.0); \
+      } \
+      ";
   }
+
   GLuint ShaderObj = glCreateShader(ShaderType);
 
   if (ShaderObj == 0)
