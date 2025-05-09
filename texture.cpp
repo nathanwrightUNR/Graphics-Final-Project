@@ -2,9 +2,10 @@
 
 Texture::Texture(const char *fileName)
 {
-
-  loadTexture(fileName);
-  initializeTexture();
+  if (loadTexture(fileName))
+    initializeTexture();
+  else
+    std::cout << "failed" << std::endl;
 }
 
 Texture::Texture()
