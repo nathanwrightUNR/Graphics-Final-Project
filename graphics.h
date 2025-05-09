@@ -94,6 +94,7 @@ private:
   Object *m_mercury;
   Object *m_venus;
   Object *m_earth;
+  Object *m_moon;
   Object *m_mars;
   Object *m_jupiter;
   Object *m_saturn;

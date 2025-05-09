@@ -171,6 +171,9 @@ bool Graphics::Initialize(int width, int height)
   m_earth = new Sphere(64, "../assets/Planetary Textures/2k_earth_daymap.jpg",
                        "../assets/Planetary Textures/2k_earth_daymap-n.jpg");
 
+  m_moon = new Sphere(64, "../assets/Planetary Textures/2k_moon.jpg",
+                      "../assets/Planetary Textures/2k_moon-n.jpg");
+
   m_earth_trace = new Ring(64, 5.925, 6.075);
 
   m_mars = new Sphere(64, "../assets/Planetary Textures/Mars.jpg",
@@ -301,13 +304,35 @@ void Graphics::Update(double dt)
   this->modelStack.push(localTransform);
   localTransform *= glm::rotate(glm::mat4(1.f), rotSpeed[0] * (float)dt, rotVector);
   localTransform *= glm::scale(glm::vec3(scale[0], scale[1], scale[2]));
-  this->modelStack.pop();
 
   if (m_earth != NULL)
     m_earth->Update(localTransform);
 
   if (m_earth_trace != NULL)
     m_earth_trace->Update(glm::rotate(glm::mat4(1.f), glm::radians(-90.f), glm::vec3(1, 0, 0)));
+
+  // animate moon
+  speed = {.9, 0., .9};
+  dist = {1.25, 0, 1.25};
+  rotVector = {1., 1., 1.};
+  rotSpeed = {1., 1., 1.};
+  scale = {.2, .2, .2};
+
+  localTransform = this->modelStack.top();
+  localTransform *= glm::translate(glm::mat4(1.f),
+                                   glm::vec3(cos(speed[0] * dt) * dist[0],
+                                             0.f,
+                                             sin(speed[2] * dt) * dist[2]));
+  localTransform *= glm::rotate(glm::mat4(1.f), glm::radians(35.f), glm::vec3(1.f, 0.f, 0.f));
+  this->modelStack.push(localTransform);
+  localTransform *= glm::rotate(glm::mat4(1.f), rotSpeed[0] * (float)dt, rotVector);
+  localTransform *= glm::scale(glm::vec3(scale[0], scale[1], scale[2]));
+
+  if (m_moon != NULL)
+    m_moon->Update(localTransform);
+
+  this->modelStack.pop();
+  this->modelStack.pop();
 
   // animate mars
   speed = {0.4, 0., 0.4};
@@ -688,6 +713,46 @@ void Graphics::Render()
     }
 
     m_earth->Render(m_positionAttrib, m_colorAttrib, m_tcAttrib, m_hasTexture, m_NpAttrib, m_has_nmap);
+  }
+
+  if (m_moon != NULL)
+  {
+    glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_moon->GetModel()));
+
+    if (m_moon->hasTex)
+    {
+      glUniform1i(m_hasTexture, true);
+      glActiveTexture(GL_TEXTURE0);
+      glBindTexture(GL_TEXTURE_2D, m_moon->getTextureID());
+      GLuint sampler = m_shader->GetUniformLocation("sp");
+      if (sampler == INVALID_UNIFORM_LOCATION)
+      {
+        printf("Sampler Not found not found\n");
+      }
+      glUniform1i(sampler, 0);
+    }
+    else
+    {
+      glUniform1i(m_hasTexture, false);
+    }
+    if (m_moon->hasNmap)
+    {
+      glUniform1i(m_has_nmap, true);
+      glActiveTexture(GL_TEXTURE1);
+      glBindTexture(GL_TEXTURE_2D, m_moon->getNormalMapID());
+      GLuint sampler = m_shader->GetUniformLocation("samp1");
+      if (sampler == INVALID_UNIFORM_LOCATION)
+      {
+        printf("Sampler Not found not found\n");
+      }
+      glUniform1i(sampler, 1);
+    }
+    else
+    {
+      glUniform1i(m_has_nmap, false);
+    }
+
+    m_moon->Render(m_positionAttrib, m_colorAttrib, m_tcAttrib, m_hasTexture, m_NpAttrib, m_has_nmap);
   }
 
   if (m_earth_trace != NULL)
