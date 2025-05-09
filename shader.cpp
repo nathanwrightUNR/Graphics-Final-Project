@@ -87,7 +87,7 @@ bool Shader::AddShader(GLenum ShaderType)
         if (hasTexture) \
           frag_color = texture(sp, tc); \
         else \
-          frag_color = vec4(1.0); \
+          frag_color = vec4(1.0, 0.0, 0.0, 1.0); \
       } \
       ";
   }

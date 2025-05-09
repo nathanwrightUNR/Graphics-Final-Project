@@ -5,6 +5,7 @@
 class Ring : public Object
 {
 public:
+  Ring(int prec, float inner_r, float outer_r);
   Ring(int prec, float inner_r, float outer_r, const char *tf);
   Ring(int prec, float inner_r, float outer_r, const char *tf, const char *nf);
 

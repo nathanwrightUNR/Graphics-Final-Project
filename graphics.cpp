@@ -161,27 +161,43 @@ bool Graphics::Initialize(int width, int height)
   m_mercury = new Sphere(64, "../assets/Planetary Textures/Mercury.jpg",
                          "../assets/Planetary Textures/Mercury-n.jpg");
 
+  m_mercury_trace = new Ring(64, 4.45, 4.55);
+
   m_venus = new Sphere(64, "../assets/Planetary Textures/Venus.jpg",
                        "../assets/Planetary Textures/Venus-n.jpg");
+
+  m_venus_trace = new Ring(64, 2.95, 3.05);
 
   m_earth = new Sphere(64, "../assets/Planetary Textures/2k_earth_daymap.jpg",
                        "../assets/Planetary Textures/2k_earth_daymap-n.jpg");
 
+  m_earth_trace = new Ring(64, 5.95, 6.05);
+
   m_mars = new Sphere(64, "../assets/Planetary Textures/Mars.jpg",
                       "../assets/Planetary Textures/Mars-n.jpg");
+
+  m_mars_trace = new Ring(64, 7.95, 8.05);
 
   m_jupiter = new Sphere(64, "../assets/Planetary Textures/Jupiter.jpg",
                          "../assets/Planetary Textures/Jupiter-n.jpg");
 
+  m_jupiter_trace = new Ring(64, 11.95, 12.05);
+
   m_saturn = new Sphere(64, "../assets/Planetary Textures/Saturn.jpg");
+
+  m_saturn_trace = new Ring(64, 15.95, 16.05);
 
   m_saturn_ring = new Ring(128, 1.3, 2, "../assets/Planetary Textures/Saturn_ring.png");
 
   m_uranus = new Sphere(64, "../assets/Planetary Textures/Uranus.jpg",
                         "../assets/Planetary Textures/Uranus-n.jpg");
 
+  m_uranus_trace = new Ring(64, 20.95, 21.05);
+
   m_neptune = new Sphere(64, "../assets/Planetary Textures/Neptune.jpg",
                          "../assets/Planetary Textures/Neptune-n.jpg");
+
+  m_neptune_trace = new Ring(64, 22.95, 23.05);
 
   glEnable(GL_DEPTH_TEST);
   glDepthFunc(GL_LESS);
@@ -193,143 +209,158 @@ Camera *Graphics::getCamera() { return this->m_camera; }
 
 void Graphics::Update(double dt)
 {
-  std::vector<float> speed, dist, rotSpeed, scale;
-  glm::vec3 rotVector;
+  float r, theta, x, z;
   glm::mat4 localTransform;
 
   // position of the sun
-  this->modelStack.push(glm::translate(glm::mat4(1.f), glm::vec3(0, 0, 0)));
-  localTransform = this->modelStack.top();
+  r = 0.;
+  theta = glm::radians(0.);
+  x = r * glm::cos(theta);
+  z = r * glm::sin(theta);
+  localTransform = glm::mat4(1.);
+  localTransform *= glm::translate(glm::mat4(1.0f), glm::vec3(x, 0.0f, z));
 
   if (m_sun != NULL)
     m_sun->Update(localTransform);
 
   // position of starship
-  dist = {0, 0, 5};
-  localTransform = this->modelStack.top();
-  localTransform *= glm::translate(glm::mat4(1.f),
-                                   glm::vec3(dist[0], dist[1], dist[2]));
+  r = 1.;
+  theta = glm::radians(90.);
+  x = r * glm::cos(theta);
+  z = r * glm::sin(theta);
+  localTransform = glm::mat4(1.);
+  localTransform *= glm::translate(glm::mat4(1.0f), glm::vec3(x, 0.0f, z));
 
   localTransform *= glm::scale(glm::mat4(1.f), glm::vec3(0.01));
-
-  this->modelStack.push(localTransform);
 
   if (m_starship != NULL)
     m_starship->Update(localTransform);
 
-  this->modelStack.pop();
-
   // position of mercury
-  dist = {5, 0, 0};
-  localTransform = this->modelStack.top();
-  localTransform *= glm::translate(glm::mat4(1.f),
-                                   glm::vec3(dist[0], dist[1], dist[2]));
-
-  this->modelStack.push(localTransform);
+  r = 3.;
+  theta = glm::radians(345.);
+  x = r * glm::cos(theta);
+  z = r * glm::sin(theta);
+  localTransform = glm::mat4(1.);
+  localTransform *= glm::translate(glm::mat4(1.0f), glm::vec3(x, 0.0f, z));
+  localTransform *= glm::scale(glm::mat4(1.f), glm::vec3(.2));
 
   if (m_mercury != NULL)
     m_mercury->Update(localTransform);
 
+  if (m_mercury_trace != NULL)
+    m_mercury_trace->Update(glm::rotate(glm::mat4(1.f), glm::radians(-90.f), glm::vec3(1, 0, 0)));
+
   // position venus
-  dist = {5., 0, 0};
-  localTransform = this->modelStack.top();
-  localTransform *= glm::translate(glm::mat4(1.f),
-                                   glm::vec3(dist[0], dist[1], dist[2]));
-  this->modelStack.push(localTransform);
+  r = 4.5;
+  theta = glm::radians(15.);
+  x = r * glm::cos(theta);
+  z = r * glm::sin(theta);
+  localTransform = glm::mat4(1.);
+  localTransform *= glm::translate(glm::mat4(1.0f), glm::vec3(x, 0.0f, z));
+  localTransform *= glm::scale(glm::mat4(1.f), glm::vec3(.4));
 
   if (m_venus != NULL)
     m_venus->Update(localTransform);
 
+  if (m_venus_trace != NULL)
+    m_venus_trace->Update(glm::rotate(glm::mat4(1.f), glm::radians(-90.f), glm::vec3(1, 0, 0)));
+
   // position of earth
-  dist = {5., 0, 0};
-  localTransform = this->modelStack.top();
-  localTransform *= glm::translate(glm::mat4(1.f),
-                                   glm::vec3(dist[0], dist[1], dist[2]));
-  this->modelStack.push(localTransform);
+  r = 6.;
+  theta = glm::radians(225.);
+  x = r * glm::cos(theta);
+  z = r * glm::sin(theta);
+  localTransform = glm::mat4(1.);
+  localTransform *= glm::translate(glm::mat4(1.0f), glm::vec3(x, 0.0f, z));
+  localTransform *= glm::scale(glm::mat4(1.f), glm::vec3(.4));
 
   if (m_earth != NULL)
     m_earth->Update(localTransform);
 
+  if (m_earth_trace != NULL)
+    m_earth_trace->Update(glm::rotate(glm::mat4(1.f), glm::radians(-90.f), glm::vec3(1, 0, 0)));
+
   // position of mars
-  dist = {5., 0, 0};
-  localTransform = this->modelStack.top();
-  localTransform *= glm::translate(glm::mat4(1.f),
-                                   glm::vec3(dist[0], dist[1], dist[2]));
-  this->modelStack.push(localTransform);
+  r = 8.;
+  theta = glm::radians(80.);
+  x = r * glm::cos(theta);
+  z = r * glm::sin(theta);
+  localTransform = glm::mat4(1.);
+  localTransform *= glm::translate(glm::mat4(1.0f), glm::vec3(x, 0.0f, z));
+  localTransform *= glm::scale(glm::mat4(1.f), glm::vec3(.3));
 
   if (m_mars != NULL)
     m_mars->Update(localTransform);
 
+  if (m_mars_trace != NULL)
+    m_mars_trace->Update(glm::rotate(glm::mat4(1.f), glm::radians(-90.f), glm::vec3(1, 0, 0)));
+
   // position of jupiter
-  dist = {5., 0, 0};
-  localTransform = this->modelStack.top();
-  localTransform *= glm::translate(glm::mat4(1.f),
-                                   glm::vec3(dist[0], dist[1], dist[2]));
-  this->modelStack.push(localTransform);
+  r = 12.;
+  theta = glm::radians(300.);
+  x = r * glm::cos(theta);
+  z = r * glm::sin(theta);
+  localTransform = glm::mat4(1.);
+  localTransform *= glm::translate(glm::mat4(1.0f), glm::vec3(x, 0.0f, z));
+  localTransform *= glm::scale(glm::mat4(1.f), glm::vec3(.9));
 
   if (m_jupiter != NULL)
     m_jupiter->Update(localTransform);
 
+  if (m_jupiter_trace != NULL)
+    m_jupiter_trace->Update(glm::rotate(glm::mat4(1.f), glm::radians(-90.f), glm::vec3(1, 0, 0)));
+
   // position of saturn
-  dist = {5., 0, 0};
-  localTransform = this->modelStack.top();
-  localTransform *= glm::translate(glm::mat4(1.f),
-                                   glm::vec3(dist[0], dist[1], dist[2]));
-  this->modelStack.push(localTransform);
+  r = 16.;
+  theta = glm::radians(0.);
+  x = r * glm::cos(theta);
+  z = r * glm::sin(theta);
+  localTransform = glm::mat4(1.);
+  localTransform *= glm::translate(glm::mat4(1.0f), glm::vec3(x, 0.0f, z));
+  localTransform *= glm::scale(glm::mat4(1.f), glm::vec3(.8));
 
   if (m_saturn != NULL)
     m_saturn->Update(localTransform);
 
+  if (m_saturn_trace != NULL)
+    m_saturn_trace->Update(glm::rotate(glm::mat4(1.f), glm::radians(-90.f), glm::vec3(1, 0, 0)));
+
   // position of saturn ring
-  dist = {0, 0, 0};
-  localTransform = this->modelStack.top();
-  localTransform *= glm::translate(glm::mat4(1.f),
-                                   glm::vec3(dist[0], dist[1], dist[2]));
-  this->modelStack.push(localTransform);
   localTransform *= glm::rotate(glm::mat4(1.f), glm::radians(-90.f), glm::vec3(1, 0, 0));
 
   if (m_saturn_ring != NULL)
     m_saturn_ring->Update(localTransform);
 
-  this->modelStack.pop();
-
   // position of uranus
-  dist = {5., 0, 0};
-  localTransform = this->modelStack.top();
-  localTransform *= glm::translate(glm::mat4(1.f),
-                                   glm::vec3(dist[0], dist[1], dist[2]));
-  this->modelStack.push(localTransform);
+  r = 21.;
+  theta = glm::radians(200.);
+  x = r * glm::cos(theta);
+  z = r * glm::sin(theta);
+  localTransform = glm::mat4(1.);
+  localTransform *= glm::translate(glm::mat4(1.0f), glm::vec3(x, 0.0f, z));
+  localTransform *= glm::scale(glm::mat4(1.f), glm::vec3(.6));
 
   if (m_uranus != NULL)
     m_uranus->Update(localTransform);
 
+  if (m_uranus_trace != NULL)
+    m_uranus_trace->Update(glm::rotate(glm::mat4(1.f), glm::radians(-90.f), glm::vec3(1, 0, 0)));
+
   // position of neptune
-  dist = {5., 0, 0};
-  localTransform = this->modelStack.top();
-  localTransform *= glm::translate(glm::mat4(1.f),
-                                   glm::vec3(dist[0], dist[1], dist[2]));
-  this->modelStack.push(localTransform);
+  r = 23.;
+  theta = glm::radians(250.);
+  x = r * glm::cos(theta);
+  z = r * glm::sin(theta);
+  localTransform = glm::mat4(1.);
+  localTransform *= glm::translate(glm::mat4(1.0f), glm::vec3(x, 0.0f, z));
+  localTransform *= glm::scale(glm::mat4(1.f), glm::vec3(.6));
 
   if (m_neptune != NULL)
     m_neptune->Update(localTransform);
 
-  this->modelStack.pop();
-
-  this->modelStack.pop();
-
-  this->modelStack.pop();
-
-  this->modelStack.pop();
-
-  this->modelStack.pop();
-
-  this->modelStack.pop();
-
-  this->modelStack.pop();
-
-  this->modelStack.pop();
-
-  this->modelStack.pop();
+  if (m_neptune_trace != NULL)
+    m_neptune_trace->Update(glm::rotate(glm::mat4(1.f), glm::radians(-90.f), glm::vec3(1, 0, 0)));
 }
 
 void Graphics::Render()
@@ -493,6 +524,15 @@ void Graphics::Render()
     m_mercury->Render(m_positionAttrib, m_colorAttrib, m_tcAttrib, m_hasTexture, m_NpAttrib, m_has_nmap);
   }
 
+  if (m_mercury_trace != NULL)
+  {
+    glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_mercury_trace->GetModel()));
+    glUniform1i(m_hasTexture, false);
+    glUniform1i(m_has_nmap, false);
+
+    m_mercury_trace->Render(m_positionAttrib, m_colorAttrib, m_tcAttrib, m_hasTexture, m_NpAttrib, m_has_nmap);
+  }
+
   if (m_venus != NULL)
   {
     glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_venus->GetModel()));
@@ -531,6 +571,15 @@ void Graphics::Render()
     }
 
     m_venus->Render(m_positionAttrib, m_colorAttrib, m_tcAttrib, m_hasTexture, m_NpAttrib, m_has_nmap);
+  }
+
+  if (m_venus_trace != NULL)
+  {
+    glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_venus_trace->GetModel()));
+    glUniform1i(m_hasTexture, false);
+    glUniform1i(m_has_nmap, false);
+
+    m_venus_trace->Render(m_positionAttrib, m_colorAttrib, m_tcAttrib, m_hasTexture, m_NpAttrib, m_has_nmap);
   }
 
   if (m_earth != NULL)
@@ -573,6 +622,15 @@ void Graphics::Render()
     m_earth->Render(m_positionAttrib, m_colorAttrib, m_tcAttrib, m_hasTexture, m_NpAttrib, m_has_nmap);
   }
 
+  if (m_earth_trace != NULL)
+  {
+    glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_earth_trace->GetModel()));
+    glUniform1i(m_hasTexture, false);
+    glUniform1i(m_has_nmap, false);
+
+    m_earth_trace->Render(m_positionAttrib, m_colorAttrib, m_tcAttrib, m_hasTexture, m_NpAttrib, m_has_nmap);
+  }
+
   if (m_mars != NULL)
   {
     glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_mars->GetModel()));
@@ -611,6 +669,15 @@ void Graphics::Render()
     }
 
     m_mars->Render(m_positionAttrib, m_colorAttrib, m_tcAttrib, m_hasTexture, m_NpAttrib, m_has_nmap);
+  }
+
+  if (m_mars_trace != NULL)
+  {
+    glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_mars_trace->GetModel()));
+    glUniform1i(m_hasTexture, false);
+    glUniform1i(m_has_nmap, false);
+
+    m_mars_trace->Render(m_positionAttrib, m_colorAttrib, m_tcAttrib, m_hasTexture, m_NpAttrib, m_has_nmap);
   }
 
   if (m_jupiter != NULL)
@@ -653,6 +720,15 @@ void Graphics::Render()
     m_jupiter->Render(m_positionAttrib, m_colorAttrib, m_tcAttrib, m_hasTexture, m_NpAttrib, m_has_nmap);
   }
 
+  if (m_jupiter_trace != NULL)
+  {
+    glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_jupiter_trace->GetModel()));
+    glUniform1i(m_hasTexture, false);
+    glUniform1i(m_has_nmap, false);
+
+    m_jupiter_trace->Render(m_positionAttrib, m_colorAttrib, m_tcAttrib, m_hasTexture, m_NpAttrib, m_has_nmap);
+  }
+
   if (m_saturn != NULL)
   {
     glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_saturn->GetModel()));
@@ -691,6 +767,15 @@ void Graphics::Render()
     }
 
     m_saturn->Render(m_positionAttrib, m_colorAttrib, m_tcAttrib, m_hasTexture, m_NpAttrib, m_has_nmap);
+  }
+
+  if (m_saturn_trace != NULL)
+  {
+    glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_saturn_trace->GetModel()));
+    glUniform1i(m_hasTexture, false);
+    glUniform1i(m_has_nmap, false);
+
+    m_saturn_trace->Render(m_positionAttrib, m_colorAttrib, m_tcAttrib, m_hasTexture, m_NpAttrib, m_has_nmap);
   }
 
   if (m_saturn_ring != NULL)
@@ -773,6 +858,15 @@ void Graphics::Render()
     m_uranus->Render(m_positionAttrib, m_colorAttrib, m_tcAttrib, m_hasTexture, m_NpAttrib, m_has_nmap);
   }
 
+  if (m_uranus_trace != NULL)
+  {
+    glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_uranus_trace->GetModel()));
+    glUniform1i(m_hasTexture, false);
+    glUniform1i(m_has_nmap, false);
+
+    m_uranus_trace->Render(m_positionAttrib, m_colorAttrib, m_tcAttrib, m_hasTexture, m_NpAttrib, m_has_nmap);
+  }
+
   if (m_neptune != NULL)
   {
     glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_neptune->GetModel()));
@@ -811,6 +905,15 @@ void Graphics::Render()
     }
 
     m_neptune->Render(m_positionAttrib, m_colorAttrib, m_tcAttrib, m_hasTexture, m_NpAttrib, m_has_nmap);
+  }
+
+  if (m_neptune_trace != NULL)
+  {
+    glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_neptune_trace->GetModel()));
+    glUniform1i(m_hasTexture, false);
+    glUniform1i(m_has_nmap, false);
+
+    m_neptune_trace->Render(m_positionAttrib, m_colorAttrib, m_tcAttrib, m_hasTexture, m_NpAttrib, m_has_nmap);
   }
 
   // Get any errors from OpenGL

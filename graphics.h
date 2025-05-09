@@ -103,6 +103,15 @@ private:
 
   Object *m_starship;
 
+  Object *m_mercury_trace;
+  Object *m_venus_trace;
+  Object *m_earth_trace;
+  Object *m_mars_trace;
+  Object *m_jupiter_trace;
+  Object *m_saturn_trace;
+  Object *m_uranus_trace;
+  Object *m_neptune_trace;
+
   // Skybox
   GLuint skyboxVAO;
   GLuint skyboxVBO;

@@ -1,5 +1,18 @@
 #include "ring.h"
 
+Ring::Ring(int prec, float inner_r, float outer_r)
+{
+  this->prec = prec;
+  this->inner_r = inner_r;
+  this->outer_r = outer_r;
+  this->createVertices();
+  this->InitBuffers();
+  this->setupModelMatrix(glm::vec3(0., 0., 0.), 0., 1.);
+
+  hasTex = false;
+  hasNmap = false;
+}
+
 Ring::Ring(int prec, float inner_r, float outer_r, const char *tf, const char *nf)
 {
   this->prec = prec;
