@@ -12,6 +12,7 @@ using namespace std;
 #include "mesh.h"
 #include "sphere.h"
 #include "ring.h"
+#include "skybox.h"
 
 class Graphics
 {
@@ -100,7 +101,17 @@ private:
   Object *m_uranus;
   Object *m_neptune;
 
-  Object *m_starship;
+  // Skybox
+  GLuint skyboxVAO;
+  GLuint skyboxVBO;
+  Skybox *m_skybox;
+  GLint m_skyboxProjMatrix;
+  GLint m_skyboxViewMatrix;
+  GLint m_skyboxPositionAttrib;
+  std::vector<GLfloat> skyboxVertices;
+  GLuint sbCubeMap;
+
+  GLuint skyboxCubeMap();
 };
 
 #endif /* GRAPHICS_H */

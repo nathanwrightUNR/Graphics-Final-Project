@@ -26,7 +26,6 @@ void Object::Render(GLint posAttribLoc, GLint colAttribLoc,
 	glBindVertexArray(vao);
 	// Enable vertex attibute arrays for each vertex attrib
 	glEnableVertexAttribArray(posAttribLoc);
-	glEnableVertexAttribArray(colAttribLoc);
 	glEnableVertexAttribArray(tcAttribLoc);
 	glEnableVertexAttribArray(nmAttribLoc);
 
@@ -59,7 +58,6 @@ void Object::Render(GLint posAttribLoc, GLint colAttribLoc,
 
 	// Disable vertex arrays
 	glDisableVertexAttribArray(posAttribLoc);
-	glDisableVertexAttribArray(colAttribLoc);
 	glDisableVertexAttribArray(tcAttribLoc);
 	glDisableVertexAttribArray(nmAttribLoc);
 
