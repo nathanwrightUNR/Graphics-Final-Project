@@ -152,9 +152,9 @@ bool Graphics::Initialize(int width, int height)
   glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
   // endof skybox rendering code
 
-  // m_starship = new Mesh(glm::vec3(2.0f, 3.0f, -5.0f),
-  //                       "../assets/SpaceShip-1/SpaceShip-1.obj",
-  //                       "../assets/SpaceShip-1/SpaceShip-1.png");
+  m_starship = new Mesh(glm::vec3(2.0f, 3.0f, -5.0f),
+                        "../assets/SpaceShip-1/SpaceShip-1.obj",
+                        "../assets/SpaceShip-1/SpaceShip-1.png");
 
   m_sun = new Sphere(64, "../assets/Planetary Textures/2k_sun.jpg");
 
@@ -203,6 +203,21 @@ void Graphics::Update(double dt)
 
   if (m_sun != NULL)
     m_sun->Update(localTransform);
+
+  // position of starship
+  dist = {0, 0, 5};
+  localTransform = this->modelStack.top();
+  localTransform *= glm::translate(glm::mat4(1.f),
+                                   glm::vec3(dist[0], dist[1], dist[2]));
+
+  localTransform *= glm::scale(glm::mat4(1.f), glm::vec3(0.01));
+
+  this->modelStack.push(localTransform);
+
+  if (m_starship != NULL)
+    m_starship->Update(localTransform);
+
+  this->modelStack.pop();
 
   // position of mercury
   dist = {5, 0, 0};
@@ -396,6 +411,46 @@ void Graphics::Render()
     }
 
     m_sun->Render(m_positionAttrib, m_colorAttrib, m_tcAttrib, m_hasTexture, m_NpAttrib, m_has_nmap);
+  }
+
+  if (m_starship != NULL)
+  {
+    glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_starship->GetModel()));
+
+    if (m_starship->hasTex)
+    {
+      glUniform1i(m_hasTexture, true);
+      glActiveTexture(GL_TEXTURE0);
+      glBindTexture(GL_TEXTURE_2D, m_starship->getTextureID());
+      GLuint sampler = m_shader->GetUniformLocation("sp");
+      if (sampler == INVALID_UNIFORM_LOCATION)
+      {
+        printf("Sampler Not found\n");
+      }
+      glUniform1i(sampler, 0);
+    }
+    else
+    {
+      glUniform1i(m_hasTexture, false);
+    }
+    if (m_starship->hasNmap)
+    {
+      glUniform1i(m_has_nmap, true);
+      glActiveTexture(GL_TEXTURE1);
+      glBindTexture(GL_TEXTURE_2D, m_starship->getNormalMapID());
+      GLuint sampler = m_shader->GetUniformLocation("samp1");
+      if (sampler == INVALID_UNIFORM_LOCATION)
+      {
+        printf("Sampler Not found not found\n");
+      }
+      glUniform1i(sampler, 1);
+    }
+    else
+    {
+      glUniform1i(m_has_nmap, false);
+    }
+
+    m_starship->Render(m_positionAttrib, m_colorAttrib, m_tcAttrib, m_hasTexture, m_NpAttrib, m_has_nmap);
   }
 
   if (m_mercury != NULL)

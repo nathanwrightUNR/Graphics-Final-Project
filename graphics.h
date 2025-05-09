@@ -101,6 +101,8 @@ private:
   Object *m_uranus;
   Object *m_neptune;
 
+  Object *m_starship;
+
   // Skybox
   GLuint skyboxVAO;
   GLuint skyboxVBO;

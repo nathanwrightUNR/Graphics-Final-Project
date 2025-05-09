@@ -37,7 +37,6 @@ void Object::Render(GLint posAttribLoc, GLint colAttribLoc,
 	glVertexAttribPointer(tcAttribLoc, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)offsetof(Vertex, texcoord));
 	glVertexAttribPointer(nmAttribLoc, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)offsetof(Vertex, normal));
 
-	// If has texture, set up texture unit(s): update here for texture rendering
 	if (m_texture != NULL)
 		glUniform1i(hasTextureLoc, true);
 
