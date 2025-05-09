@@ -1,13 +1,5 @@
 #include "sphere.h"
 
-Sphere::Sphere(glm::vec3 color_1, glm::vec3 color_2)
-    : color_1(color_1), color_2(color_2)
-{
-  this->createVertices();
-  this->InitBuffers();
-  this->setupModelMatrix(glm::vec3(0., 0., 0.), 0., 1.);
-}
-
 Sphere::Sphere(int prec)
 {
   this->prec = prec;

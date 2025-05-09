@@ -13,7 +13,6 @@ public:
 private:
   void createVertices() override;
   bool loadModelFromFile(const char *path);
-  GLuint getTextureID() override { return m_texture ? m_texture->getTextureID() : 0; }
 };
 
 #endif /* MESH_H */

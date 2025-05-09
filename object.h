@@ -42,9 +42,11 @@ public:
    */
   glm::mat4 GetModel();
 
-  virtual GLuint getTextureID() { return 0; }
-
   bool hasTex;
+  GLuint getTextureID() { return m_texture ? m_texture->getTextureID() : 0; }
+
+  bool is_lit = true;
+  GLuint getNormalMapID() { return m_normal_map ? m_normal_map->getTextureID() : 0; }
 
 protected:
   /**
@@ -54,6 +56,8 @@ protected:
   virtual void createVertices() = 0;
 
   Texture *m_texture = nullptr;
+
+  Texture *m_normal_map = nullptr;
 
   glm::vec3 pivotLocation;
 

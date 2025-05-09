@@ -10,7 +10,6 @@ public:
 
 private:
   void createVertices() override;
-  GLuint getTextureID() override { return m_texture ? m_texture->getTextureID() : 0; }
 
   float inner_r = 2;
   float outer_r = 1;
