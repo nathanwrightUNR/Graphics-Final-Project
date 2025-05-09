@@ -10,3 +10,4 @@ CMakeLists.txt
 /x64/
 /Debug/
 /Release/
+.DS_Store

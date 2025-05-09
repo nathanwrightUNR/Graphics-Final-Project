@@ -66,15 +66,29 @@ bool Graphics::Initialize(int width, int height)
     return false;
   }
 
-  m_starship = new Mesh(glm::vec3(2.0f, 3.0f, -5.0f),
-                        "../assets/SpaceShip-1/SpaceShip-1.obj",
-                        "../assets/SpaceShip-1/SpaceShip-1.png");
+  // m_starship = new Mesh(glm::vec3(2.0f, 3.0f, -5.0f),
+  //                       "../assets/SpaceShip-1/SpaceShip-1.obj",
+  //                       "../assets/SpaceShip-1/SpaceShip-1.png");
 
   m_sun = new Sphere(64, "../assets/Planetary Textures/2k_sun.jpg");
 
-  m_moon = new Sphere(32, "../assets/Planetary Textures/2k_moon.jpg");
+  m_mercury = new Sphere(64, "../assets/Planetary Textures/Mercury.jpg");
 
-  m_planet = new Sphere(48, "../assets/Planetary Textures/2k_earth_daymap.jpg");
+  m_venus = new Sphere(64, "../assets/Planetary Textures/Venus.jpg");
+
+  m_earth = new Sphere(64, "../assets/Planetary Textures/2k_earth_daymap.jpg");
+
+  m_mars = new Sphere(64, "../assets/Planetary Textures/Mars.jpg");
+
+  m_jupiter = new Sphere(64, "../assets/Planetary Textures/Jupiter.jpg");
+
+  m_saturn = new Sphere(64, "../assets/Planetary Textures/Saturn.jpg");
+
+  m_saturn_ring = new Ring(128, 1.3, 2, "../assets/Planetary Textures/Saturn_ring.png");
+
+  m_uranus = new Sphere(64, "../assets/Planetary Textures/Uranus.jpg");
+
+  m_uranus = new Sphere(64, "../assets/Planetary Textures/Neptune.jpg");
 
   glEnable(GL_DEPTH_TEST);
   glDepthFunc(GL_LESS);
@@ -84,85 +98,129 @@ bool Graphics::Initialize(int width, int height)
 
 Camera *Graphics::getCamera() { return this->m_camera; }
 
-void Graphics::HierarchicalUpdate2(double dt)
+void Graphics::Update(double dt)
 {
   std::vector<float> speed, dist, rotSpeed, scale;
   glm::vec3 rotVector;
   glm::mat4 localTransform;
 
   // position of the sun
-  this->modelStack.push(glm::translate(glm::mat4(1.f), glm::vec3(0, 0, 0))); // sun's coordinate
-  localTransform = this->modelStack.top();                                   // The sun origin
-  localTransform *= glm::rotate(glm::mat4(1.0f), (float)dt, glm::vec3(0.f, 1.f, 0.f));
-  localTransform *= glm::scale(glm::vec3(.75, .75, .75));
+  this->modelStack.push(glm::translate(glm::mat4(1.f), glm::vec3(0, 0, 0)));
+  localTransform = this->modelStack.top();
+
   if (m_sun != NULL)
     m_sun->Update(localTransform);
 
-  // position of the starship
-  speed = {0, 1, 1};
-  dist = {0, 3.25, 3.25};
-  rotVector = {0., 0., 0.};
-  rotSpeed = {.0, .0, .0};
-  scale = {.02f, .02f, .02f};
+  // position of mercury
+  dist = {5, 0, 0};
   localTransform = this->modelStack.top();
   localTransform *= glm::translate(glm::mat4(1.f),
-                                   glm::vec3(0.f,
-                                             cos(speed[1] * dt) * dist[1],
-                                             sin(speed[2] * dt) * dist[2]));
+                                   glm::vec3(dist[0], dist[1], dist[2]));
+
   this->modelStack.push(localTransform);
 
-  glm::vec3 starship_pos = glm::vec3(localTransform[3]);
-  glm::vec3 sun_pos = glm::vec3(0.f, 0.f, 0.f);
-  glm::vec3 to_sun = sun_pos - starship_pos;
-  float angle = glm::atan(to_sun.y, to_sun.z);
-  localTransform *= glm::rotate(glm::mat4(1.f), -angle, glm::vec3(1.f, 0.f, 0.f));
-  localTransform *= glm::scale(glm::vec3(scale[0], scale[1], scale[2]));
+  if (m_mercury != NULL)
+    m_mercury->Update(localTransform);
 
-  if (m_starship != NULL)
-    m_starship->Update(localTransform);
+  // position venus
+  dist = {5., 0, 0};
+  localTransform = this->modelStack.top();
+  localTransform *= glm::translate(glm::mat4(1.f),
+                                   glm::vec3(dist[0], dist[1], dist[2]));
+  this->modelStack.push(localTransform);
+
+  if (m_venus != NULL)
+    m_venus->Update(localTransform);
+
+  // position of earth
+  dist = {5., 0, 0};
+  localTransform = this->modelStack.top();
+  localTransform *= glm::translate(glm::mat4(1.f),
+                                   glm::vec3(dist[0], dist[1], dist[2]));
+  this->modelStack.push(localTransform);
+
+  if (m_earth != NULL)
+    m_earth->Update(localTransform);
+
+  // position of mars
+  dist = {5., 0, 0};
+  localTransform = this->modelStack.top();
+  localTransform *= glm::translate(glm::mat4(1.f),
+                                   glm::vec3(dist[0], dist[1], dist[2]));
+  this->modelStack.push(localTransform);
+
+  if (m_mars != NULL)
+    m_mars->Update(localTransform);
+
+  // position of jupiter
+  dist = {5., 0, 0};
+  localTransform = this->modelStack.top();
+  localTransform *= glm::translate(glm::mat4(1.f),
+                                   glm::vec3(dist[0], dist[1], dist[2]));
+  this->modelStack.push(localTransform);
+
+  if (m_jupiter != NULL)
+    m_jupiter->Update(localTransform);
+
+  // position of saturn
+  dist = {5., 0, 0};
+  localTransform = this->modelStack.top();
+  localTransform *= glm::translate(glm::mat4(1.f),
+                                   glm::vec3(dist[0], dist[1], dist[2]));
+  this->modelStack.push(localTransform);
+
+  if (m_saturn != NULL)
+    m_saturn->Update(localTransform);
+
+  // position of saturn ring
+  dist = {0, 0, 0};
+  localTransform = this->modelStack.top();
+  localTransform *= glm::translate(glm::mat4(1.f),
+                                   glm::vec3(dist[0], dist[1], dist[2]));
+  this->modelStack.push(localTransform);
+  localTransform *= glm::rotate(glm::mat4(1.f), glm::radians(-90.f), glm::vec3(1, 0, 0));
+  if (m_saturn_ring != NULL)
+    m_saturn_ring->Update(localTransform);
 
   this->modelStack.pop();
 
-  // position of the planet
-  speed = {1., 0., 1.};
-  dist = {6., 0, 6.};
-  rotVector = {1., 1., 1.};
-  rotSpeed = {1., 1., 1.};
-  scale = {.5, .5, .5};
+  // position of uranus
+  dist = {5., 0, 0};
   localTransform = this->modelStack.top();
   localTransform *= glm::translate(glm::mat4(1.f),
-                                   glm::vec3(cos(speed[0] * dt) * dist[0],
-                                             0.f,
-                                             sin(speed[2] * dt) * dist[2]));
+                                   glm::vec3(dist[0], dist[1], dist[2]));
   this->modelStack.push(localTransform);
-  localTransform *= glm::rotate(glm::mat4(1.f), rotSpeed[0] * (float)dt, rotVector);
-  localTransform *= glm::scale(glm::vec3(scale[0], scale[1], scale[2]));
-  if (m_planet != NULL)
-    m_planet->Update(localTransform);
 
-  // position of the moon
-  speed = {1., 0., 1.};
-  dist = {1.25, 0, 1.25};
-  rotVector = {1., 1., 1.};
-  rotSpeed = {1., 1., 1.};
-  scale = {.2, .2, .2};
+  if (m_uranus != NULL)
+    m_uranus->Update(localTransform);
+
+  // position of neptune
+  dist = {5., 0, 0};
   localTransform = this->modelStack.top();
-  localTransform *= glm::rotate(glm::mat4(1.f), glm::radians(35.f), glm::vec3(1.f, 0.f, 0.f));
   localTransform *= glm::translate(glm::mat4(1.f),
-                                   glm::vec3(cos(speed[0] * dt) * dist[0],
-                                             0.f,
-                                             sin(speed[2] * dt) * dist[2]));
+                                   glm::vec3(dist[0], dist[1], dist[2]));
   this->modelStack.push(localTransform);
-  localTransform *= glm::rotate(glm::mat4(1.f), rotSpeed[0] * (float)dt, rotVector);
-  localTransform *= glm::scale(glm::vec3(scale[0], scale[1], scale[2]));
-  if (m_moon != NULL)
-    m_moon->Update(localTransform);
 
-  this->modelStack.pop(); // back to the sun coordinate
+  if (m_neptune != NULL)
+    m_neptune->Update(localTransform);
 
-  this->modelStack.pop(); // pop planet
+  this->modelStack.pop();
 
-  this->modelStack.pop(); // empy stack
+  this->modelStack.pop();
+
+  this->modelStack.pop();
+
+  this->modelStack.pop();
+
+  this->modelStack.pop();
+
+  this->modelStack.pop();
+
+  this->modelStack.pop();
+
+  this->modelStack.pop();
+
+  this->modelStack.pop();
 }
 
 void Graphics::Render()
@@ -196,55 +254,156 @@ void Graphics::Render()
     }
   }
 
-  if (m_starship != NULL)
+  if (m_mercury != NULL)
   {
-    glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_starship->GetModel()));
-    if (m_starship->hasTex)
+    glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_mercury->GetModel()));
+    if (m_mercury->hasTex)
     {
       glActiveTexture(GL_TEXTURE0);
-      glBindTexture(GL_TEXTURE_2D, m_starship->getTextureID());
+      glBindTexture(GL_TEXTURE_2D, m_mercury->getTextureID());
       GLuint sampler = m_shader->GetUniformLocation("sp");
       if (sampler == INVALID_UNIFORM_LOCATION)
       {
         printf("Sampler Not found not found\n");
       }
       glUniform1i(sampler, 0);
-      m_starship->Render(m_positionAttrib, m_colorAttrib, m_tcAttrib, m_hasTexture);
+      m_mercury->Render(m_positionAttrib, m_colorAttrib, m_tcAttrib, m_hasTexture);
     }
   }
 
-  if (m_planet != NULL)
+  if (m_venus != NULL)
   {
-    glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_planet->GetModel()));
-    if (m_planet->hasTex)
+    glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_venus->GetModel()));
+    if (m_venus->hasTex)
     {
       glActiveTexture(GL_TEXTURE0);
-      glBindTexture(GL_TEXTURE_2D, m_planet->getTextureID());
+      glBindTexture(GL_TEXTURE_2D, m_venus->getTextureID());
       GLuint sampler = m_shader->GetUniformLocation("sp");
       if (sampler == INVALID_UNIFORM_LOCATION)
       {
         printf("Sampler Not found not found\n");
       }
       glUniform1i(sampler, 0);
-      m_planet->Render(m_positionAttrib, m_colorAttrib, m_tcAttrib, m_hasTexture);
+      m_venus->Render(m_positionAttrib, m_colorAttrib, m_tcAttrib, m_hasTexture);
     }
   }
 
-  // Render Moon
-  if (m_moon != NULL)
+  if (m_earth != NULL)
   {
-    glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_moon->GetModel()));
-    if (m_moon->hasTex)
+    glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_earth->GetModel()));
+    if (m_earth->hasTex)
     {
       glActiveTexture(GL_TEXTURE0);
-      glBindTexture(GL_TEXTURE_2D, m_moon->getTextureID());
+      glBindTexture(GL_TEXTURE_2D, m_earth->getTextureID());
       GLuint sampler = m_shader->GetUniformLocation("sp");
       if (sampler == INVALID_UNIFORM_LOCATION)
       {
         printf("Sampler Not found not found\n");
       }
       glUniform1i(sampler, 0);
-      m_moon->Render(m_positionAttrib, m_colorAttrib, m_tcAttrib, m_hasTexture);
+      m_earth->Render(m_positionAttrib, m_colorAttrib, m_tcAttrib, m_hasTexture);
+    }
+  }
+
+  if (m_mars != NULL)
+  {
+    glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_mars->GetModel()));
+    if (m_mars->hasTex)
+    {
+      glActiveTexture(GL_TEXTURE0);
+      glBindTexture(GL_TEXTURE_2D, m_mars->getTextureID());
+      GLuint sampler = m_shader->GetUniformLocation("sp");
+      if (sampler == INVALID_UNIFORM_LOCATION)
+      {
+        printf("Sampler Not found not found\n");
+      }
+      glUniform1i(sampler, 0);
+      m_mars->Render(m_positionAttrib, m_colorAttrib, m_tcAttrib, m_hasTexture);
+    }
+  }
+
+  if (m_jupiter != NULL)
+  {
+    glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_jupiter->GetModel()));
+    if (m_jupiter->hasTex)
+    {
+      glActiveTexture(GL_TEXTURE0);
+      glBindTexture(GL_TEXTURE_2D, m_jupiter->getTextureID());
+      GLuint sampler = m_shader->GetUniformLocation("sp");
+      if (sampler == INVALID_UNIFORM_LOCATION)
+      {
+        printf("Sampler Not found not found\n");
+      }
+      glUniform1i(sampler, 0);
+      m_jupiter->Render(m_positionAttrib, m_colorAttrib, m_tcAttrib, m_hasTexture);
+    }
+  }
+
+  if (m_saturn != NULL)
+  {
+    glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_saturn->GetModel()));
+    if (m_saturn->hasTex)
+    {
+      glActiveTexture(GL_TEXTURE0);
+      glBindTexture(GL_TEXTURE_2D, m_saturn->getTextureID());
+      GLuint sampler = m_shader->GetUniformLocation("sp");
+      if (sampler == INVALID_UNIFORM_LOCATION)
+      {
+        printf("Sampler Not found not found\n");
+      }
+      glUniform1i(sampler, 0);
+      m_saturn->Render(m_positionAttrib, m_colorAttrib, m_tcAttrib, m_hasTexture);
+    }
+  }
+
+  if (m_saturn_ring != NULL)
+  {
+    glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_saturn_ring->GetModel()));
+    if (m_saturn_ring->hasTex)
+    {
+      glActiveTexture(GL_TEXTURE0);
+      glBindTexture(GL_TEXTURE_2D, m_saturn_ring->getTextureID());
+      GLuint sampler = m_shader->GetUniformLocation("sp");
+      if (sampler == INVALID_UNIFORM_LOCATION)
+      {
+        printf("Sampler Not found not found\n");
+      }
+      glUniform1i(sampler, 0);
+      m_saturn_ring->Render(m_positionAttrib, m_colorAttrib, m_tcAttrib, m_hasTexture);
+    }
+  }
+
+  if (m_uranus != NULL)
+  {
+    glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_uranus->GetModel()));
+    if (m_uranus->hasTex)
+    {
+      glActiveTexture(GL_TEXTURE0);
+      glBindTexture(GL_TEXTURE_2D, m_uranus->getTextureID());
+      GLuint sampler = m_shader->GetUniformLocation("sp");
+      if (sampler == INVALID_UNIFORM_LOCATION)
+      {
+        printf("Sampler Not found not found\n");
+      }
+      glUniform1i(sampler, 0);
+      m_uranus->Render(m_positionAttrib, m_colorAttrib, m_tcAttrib, m_hasTexture);
+    }
+  }
+
+  if (m_neptune != NULL)
+  {
+    glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_neptune->GetModel()));
+    if (m_neptune->hasTex)
+    {
+      glActiveTexture(GL_TEXTURE0);
+      glBindTexture(GL_TEXTURE_2D, m_neptune->getTextureID());
+      GLuint sampler = m_shader->GetUniformLocation("sp");
+      if (sampler == INVALID_UNIFORM_LOCATION)
+      {
+        printf("Sampler Not found not found\n");
+      }
+      glUniform1i(sampler, 0);
+      m_neptune->Render(m_positionAttrib, m_colorAttrib, m_tcAttrib, m_hasTexture);
     }
   }
 
