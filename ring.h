@@ -13,7 +13,7 @@ private:
 
   float inner_r = 2;
   float outer_r = 1;
-  int prec = 0;
+  int prec = 64;
 };
 
 #endif /* RING_H */

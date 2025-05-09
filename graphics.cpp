@@ -88,7 +88,7 @@ bool Graphics::Initialize(int width, int height)
 
   m_uranus = new Sphere(64, "../assets/Planetary Textures/Uranus.jpg");
 
-  m_uranus = new Sphere(64, "../assets/Planetary Textures/Neptune.jpg");
+  m_neptune = new Sphere(64, "../assets/Planetary Textures/Neptune.jpg");
 
   glEnable(GL_DEPTH_TEST);
   glDepthFunc(GL_LESS);
@@ -179,6 +179,7 @@ void Graphics::Update(double dt)
                                    glm::vec3(dist[0], dist[1], dist[2]));
   this->modelStack.push(localTransform);
   localTransform *= glm::rotate(glm::mat4(1.f), glm::radians(-90.f), glm::vec3(1, 0, 0));
+
   if (m_saturn_ring != NULL)
     m_saturn_ring->Update(localTransform);
 
@@ -238,10 +239,11 @@ void Graphics::Render()
 
   if (m_sun != NULL)
   {
-    glUniform1i(m_hasTexture, false);
     glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_sun->GetModel()));
+
     if (m_sun->hasTex)
     {
+      glUniform1i(m_hasTexture, true);
       glActiveTexture(GL_TEXTURE0);
       glBindTexture(GL_TEXTURE_2D, m_sun->getTextureID());
       GLuint sampler = m_shader->GetUniformLocation("sp");
@@ -250,15 +252,33 @@ void Graphics::Render()
         printf("Sampler Not found not found\n");
       }
       glUniform1i(sampler, 0);
-      m_sun->Render(m_positionAttrib, m_colorAttrib, m_tcAttrib, m_hasTexture);
     }
+    else
+    {
+      glUniform1i(m_hasTexture, false);
+    }
+    if (m_sun->getNormalMapID() != 0)
+    {
+      glUniform1i(m_has_nmap, true);
+      glActiveTexture(GL_TEXTURE1);
+      glBindTexture(GL_TEXTURE_2D, m_sun->getNormalMapID());
+      glUniform1i(m_NpAttrib, 1);
+    }
+    else
+    {
+      glUniform1i(m_has_nmap, false);
+    }
+
+    m_sun->Render(m_positionAttrib, m_colorAttrib, m_tcAttrib, m_hasTexture, m_NpAttrib, m_has_nmap);
   }
 
   if (m_mercury != NULL)
   {
     glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_mercury->GetModel()));
+
     if (m_mercury->hasTex)
     {
+      glUniform1i(m_hasTexture, true);
       glActiveTexture(GL_TEXTURE0);
       glBindTexture(GL_TEXTURE_2D, m_mercury->getTextureID());
       GLuint sampler = m_shader->GetUniformLocation("sp");
@@ -267,15 +287,33 @@ void Graphics::Render()
         printf("Sampler Not found not found\n");
       }
       glUniform1i(sampler, 0);
-      m_mercury->Render(m_positionAttrib, m_colorAttrib, m_tcAttrib, m_hasTexture);
     }
+    else
+    {
+      glUniform1i(m_hasTexture, false);
+    }
+    if (m_mercury->getNormalMapID() != 0)
+    {
+      glUniform1i(m_has_nmap, true);
+      glActiveTexture(GL_TEXTURE1);
+      glBindTexture(GL_TEXTURE_2D, m_mercury->getNormalMapID());
+      glUniform1i(m_NpAttrib, 1);
+    }
+    else
+    {
+      glUniform1i(m_has_nmap, false);
+    }
+
+    m_mercury->Render(m_positionAttrib, m_colorAttrib, m_tcAttrib, m_hasTexture, m_NpAttrib, m_has_nmap);
   }
 
   if (m_venus != NULL)
   {
     glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_venus->GetModel()));
+
     if (m_venus->hasTex)
     {
+      glUniform1i(m_hasTexture, true);
       glActiveTexture(GL_TEXTURE0);
       glBindTexture(GL_TEXTURE_2D, m_venus->getTextureID());
       GLuint sampler = m_shader->GetUniformLocation("sp");
@@ -284,15 +322,33 @@ void Graphics::Render()
         printf("Sampler Not found not found\n");
       }
       glUniform1i(sampler, 0);
-      m_venus->Render(m_positionAttrib, m_colorAttrib, m_tcAttrib, m_hasTexture);
     }
+    else
+    {
+      glUniform1i(m_hasTexture, false);
+    }
+    if (m_venus->getNormalMapID() != 0)
+    {
+      glUniform1i(m_has_nmap, true);
+      glActiveTexture(GL_TEXTURE1);
+      glBindTexture(GL_TEXTURE_2D, m_venus->getNormalMapID());
+      glUniform1i(m_NpAttrib, 1);
+    }
+    else
+    {
+      glUniform1i(m_has_nmap, false);
+    }
+
+    m_venus->Render(m_positionAttrib, m_colorAttrib, m_tcAttrib, m_hasTexture, m_NpAttrib, m_has_nmap);
   }
 
   if (m_earth != NULL)
   {
     glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_earth->GetModel()));
+
     if (m_earth->hasTex)
     {
+      glUniform1i(m_hasTexture, true);
       glActiveTexture(GL_TEXTURE0);
       glBindTexture(GL_TEXTURE_2D, m_earth->getTextureID());
       GLuint sampler = m_shader->GetUniformLocation("sp");
@@ -301,15 +357,33 @@ void Graphics::Render()
         printf("Sampler Not found not found\n");
       }
       glUniform1i(sampler, 0);
-      m_earth->Render(m_positionAttrib, m_colorAttrib, m_tcAttrib, m_hasTexture);
     }
+    else
+    {
+      glUniform1i(m_hasTexture, false);
+    }
+    if (m_earth->getNormalMapID() != 0)
+    {
+      glUniform1i(m_has_nmap, true);
+      glActiveTexture(GL_TEXTURE1);
+      glBindTexture(GL_TEXTURE_2D, m_earth->getNormalMapID());
+      glUniform1i(m_NpAttrib, 1);
+    }
+    else
+    {
+      glUniform1i(m_has_nmap, false);
+    }
+
+    m_earth->Render(m_positionAttrib, m_colorAttrib, m_tcAttrib, m_hasTexture, m_NpAttrib, m_has_nmap);
   }
 
   if (m_mars != NULL)
   {
     glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_mars->GetModel()));
+
     if (m_mars->hasTex)
     {
+      glUniform1i(m_hasTexture, true);
       glActiveTexture(GL_TEXTURE0);
       glBindTexture(GL_TEXTURE_2D, m_mars->getTextureID());
       GLuint sampler = m_shader->GetUniformLocation("sp");
@@ -318,15 +392,33 @@ void Graphics::Render()
         printf("Sampler Not found not found\n");
       }
       glUniform1i(sampler, 0);
-      m_mars->Render(m_positionAttrib, m_colorAttrib, m_tcAttrib, m_hasTexture);
     }
+    else
+    {
+      glUniform1i(m_hasTexture, false);
+    }
+    if (m_mars->getNormalMapID() != 0)
+    {
+      glUniform1i(m_has_nmap, true);
+      glActiveTexture(GL_TEXTURE1);
+      glBindTexture(GL_TEXTURE_2D, m_mars->getNormalMapID());
+      glUniform1i(m_NpAttrib, 1);
+    }
+    else
+    {
+      glUniform1i(m_has_nmap, false);
+    }
+
+    m_mars->Render(m_positionAttrib, m_colorAttrib, m_tcAttrib, m_hasTexture, m_NpAttrib, m_has_nmap);
   }
 
   if (m_jupiter != NULL)
   {
     glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_jupiter->GetModel()));
+
     if (m_jupiter->hasTex)
     {
+      glUniform1i(m_hasTexture, true);
       glActiveTexture(GL_TEXTURE0);
       glBindTexture(GL_TEXTURE_2D, m_jupiter->getTextureID());
       GLuint sampler = m_shader->GetUniformLocation("sp");
@@ -335,15 +427,33 @@ void Graphics::Render()
         printf("Sampler Not found not found\n");
       }
       glUniform1i(sampler, 0);
-      m_jupiter->Render(m_positionAttrib, m_colorAttrib, m_tcAttrib, m_hasTexture);
     }
+    else
+    {
+      glUniform1i(m_hasTexture, false);
+    }
+    if (m_jupiter->getNormalMapID() != 0)
+    {
+      glUniform1i(m_has_nmap, true);
+      glActiveTexture(GL_TEXTURE1);
+      glBindTexture(GL_TEXTURE_2D, m_jupiter->getNormalMapID());
+      glUniform1i(m_NpAttrib, 1);
+    }
+    else
+    {
+      glUniform1i(m_has_nmap, false);
+    }
+
+    m_jupiter->Render(m_positionAttrib, m_colorAttrib, m_tcAttrib, m_hasTexture, m_NpAttrib, m_has_nmap);
   }
 
   if (m_saturn != NULL)
   {
     glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_saturn->GetModel()));
+
     if (m_saturn->hasTex)
     {
+      glUniform1i(m_hasTexture, true);
       glActiveTexture(GL_TEXTURE0);
       glBindTexture(GL_TEXTURE_2D, m_saturn->getTextureID());
       GLuint sampler = m_shader->GetUniformLocation("sp");
@@ -352,32 +462,57 @@ void Graphics::Render()
         printf("Sampler Not found not found\n");
       }
       glUniform1i(sampler, 0);
-      m_saturn->Render(m_positionAttrib, m_colorAttrib, m_tcAttrib, m_hasTexture);
     }
+    else
+    {
+      glUniform1i(m_hasTexture, false);
+    }
+    if (m_saturn->getNormalMapID() != 0)
+    {
+      glUniform1i(m_has_nmap, true);
+      glActiveTexture(GL_TEXTURE1);
+      glBindTexture(GL_TEXTURE_2D, m_saturn->getNormalMapID());
+      glUniform1i(m_NpAttrib, 1);
+    }
+    else
+    {
+      glUniform1i(m_has_nmap, false);
+    }
+
+    m_saturn->Render(m_positionAttrib, m_colorAttrib, m_tcAttrib, m_hasTexture, m_NpAttrib, m_has_nmap);
   }
 
   if (m_saturn_ring != NULL)
   {
     glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_saturn_ring->GetModel()));
+
     if (m_saturn_ring->hasTex)
     {
+      glUniform1i(m_hasTexture, true);
       glActiveTexture(GL_TEXTURE0);
       glBindTexture(GL_TEXTURE_2D, m_saturn_ring->getTextureID());
       GLuint sampler = m_shader->GetUniformLocation("sp");
       if (sampler == INVALID_UNIFORM_LOCATION)
       {
-        printf("Sampler Not found not found\n");
+        printf("Sampler Not found\n");
       }
       glUniform1i(sampler, 0);
-      m_saturn_ring->Render(m_positionAttrib, m_colorAttrib, m_tcAttrib, m_hasTexture);
     }
+    else
+    {
+      glUniform1i(m_hasTexture, false);
+    }
+
+    m_saturn_ring->Render(m_positionAttrib, m_colorAttrib, m_tcAttrib, m_hasTexture, m_NpAttrib, m_has_nmap);
   }
 
   if (m_uranus != NULL)
   {
     glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_uranus->GetModel()));
+
     if (m_uranus->hasTex)
     {
+      glUniform1i(m_hasTexture, true);
       glActiveTexture(GL_TEXTURE0);
       glBindTexture(GL_TEXTURE_2D, m_uranus->getTextureID());
       GLuint sampler = m_shader->GetUniformLocation("sp");
@@ -386,15 +521,33 @@ void Graphics::Render()
         printf("Sampler Not found not found\n");
       }
       glUniform1i(sampler, 0);
-      m_uranus->Render(m_positionAttrib, m_colorAttrib, m_tcAttrib, m_hasTexture);
     }
+    else
+    {
+      glUniform1i(m_hasTexture, false);
+    }
+    if (m_uranus->getNormalMapID() != 0)
+    {
+      glUniform1i(m_has_nmap, true);
+      glActiveTexture(GL_TEXTURE1);
+      glBindTexture(GL_TEXTURE_2D, m_uranus->getNormalMapID());
+      glUniform1i(m_NpAttrib, 1);
+    }
+    else
+    {
+      glUniform1i(m_has_nmap, false);
+    }
+
+    m_uranus->Render(m_positionAttrib, m_colorAttrib, m_tcAttrib, m_hasTexture, m_NpAttrib, m_has_nmap);
   }
 
   if (m_neptune != NULL)
   {
     glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_neptune->GetModel()));
+
     if (m_neptune->hasTex)
     {
+      glUniform1i(m_hasTexture, true);
       glActiveTexture(GL_TEXTURE0);
       glBindTexture(GL_TEXTURE_2D, m_neptune->getTextureID());
       GLuint sampler = m_shader->GetUniformLocation("sp");
@@ -403,8 +556,24 @@ void Graphics::Render()
         printf("Sampler Not found not found\n");
       }
       glUniform1i(sampler, 0);
-      m_neptune->Render(m_positionAttrib, m_colorAttrib, m_tcAttrib, m_hasTexture);
     }
+    else
+    {
+      glUniform1i(m_hasTexture, false);
+    }
+    if (m_neptune->getNormalMapID() != 0)
+    {
+      glUniform1i(m_has_nmap, true);
+      glActiveTexture(GL_TEXTURE1);
+      glBindTexture(GL_TEXTURE_2D, m_neptune->getNormalMapID());
+      glUniform1i(m_NpAttrib, 1);
+    }
+    else
+    {
+      glUniform1i(m_has_nmap, false);
+    }
+
+    m_neptune->Render(m_positionAttrib, m_colorAttrib, m_tcAttrib, m_hasTexture, m_NpAttrib, m_has_nmap);
   }
 
   // Get any errors from OpenGL
@@ -419,6 +588,7 @@ void Graphics::Render()
 bool Graphics::collectShPrLocs()
 {
   bool anyProblem = true;
+
   // Locate the projection matrix in the shader
   m_projectionMatrix = m_shader->GetUniformLocation("projectionMatrix");
   if (m_projectionMatrix == INVALID_UNIFORM_LOCATION)
@@ -451,19 +621,19 @@ bool Graphics::collectShPrLocs()
     anyProblem = false;
   }
 
-  // Locate the color vertex attribute
-  m_colorAttrib = m_shader->GetAttribLocation("v_color");
-  if (m_colorAttrib == -1)
+  // Locate the normal vertex attribute
+  m_NpAttrib = m_shader->GetAttribLocation("v_normal");
+  if (m_NpAttrib == -1)
   {
-    printf("v_color attribute not found\n");
+    printf("v_normal attribute not found\n");
     anyProblem = false;
   }
 
   // Locate the texture coordinate attribute
-  m_tcAttrib = m_shader->GetAttribLocation("v_tc");
+  m_tcAttrib = m_shader->GetAttribLocation("texCoord");
   if (m_tcAttrib == -1)
   {
-    printf("v_texcoord attribute not found\n");
+    printf("texCoord attribute not found\n");
     anyProblem = false;
   }
 
@@ -472,6 +642,20 @@ bool Graphics::collectShPrLocs()
   if (m_hasTexture == INVALID_UNIFORM_LOCATION)
   {
     printf("hasTexture uniform not found\n");
+    anyProblem = false;
+  }
+
+  m_has_nmap = m_shader->GetUniformLocation("hasNormalMap");
+  if (m_has_nmap == INVALID_UNIFORM_LOCATION)
+  {
+    printf("hasNormalMap uniform not found\n");
+    anyProblem = false;
+  }
+
+  m_NpAttrib = m_shader->GetUniformLocation("samp1");
+  if (m_NpAttrib == INVALID_UNIFORM_LOCATION)
+  {
+    printf("samp1 (normal map sampler) uniform not found\n");
     anyProblem = false;
   }
 

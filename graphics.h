@@ -85,6 +85,8 @@ private:
   GLint m_colorAttrib;
   GLint m_tcAttrib;
   GLint m_hasTexture;
+  GLint m_has_nmap;
+  GLint m_NpAttrib;
 
   // changed to vector of object pointers.
   Object *m_sun;

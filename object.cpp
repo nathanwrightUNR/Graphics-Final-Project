@@ -19,7 +19,9 @@ glm::mat4 Object::GetModel()
 	return model;
 }
 
-void Object::Render(GLint posAttribLoc, GLint colAttribLoc, GLint tcAttribLoc, GLint hasTextureLoc)
+void Object::Render(GLint posAttribLoc, GLint colAttribLoc,
+										GLint tcAttribLoc, GLint hasTextureLoc,
+										GLint nmAttribLoc, GLint hasNmap)
 {
 	glBindVertexArray(vao);
 	// Enable vertex attibute arrays for each vertex attrib

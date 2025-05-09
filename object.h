@@ -33,7 +33,9 @@ public:
 
   void setupModelMatrix(glm::vec3 pivotLoc, float angle, float scale);
 
-  void Render(GLint posAttribLoc, GLint colAttribLoc, GLint tcAttribLoc, GLint hasTex);
+  void Render(GLint posAttribLoc, GLint colAttribLoc,
+              GLint tcAttribLoc, GLint hasTex,
+              GLint nmAttribLoc, GLint hasNmap);
 
   /**
    * @brief get the model.
