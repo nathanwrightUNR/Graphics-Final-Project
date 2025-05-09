@@ -37,6 +37,8 @@ public:
               GLint tcAttribLoc, GLint hasTex,
               GLint nmAttribLoc, GLint hasNmap);
 
+  void Instance(std::vector<glm::mat4> &transforms);
+
   /**
    * @brief get the model.
    *
@@ -85,6 +87,10 @@ protected:
 
   // angle for rotation.
   float angle;
+
+  GLuint iVB = 0;
+  int num_instances = 0;
+  bool instanced = false;
 };
 
 #endif /* OBJECT_H */

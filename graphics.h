@@ -113,6 +113,18 @@ private:
   Object *m_uranus_trace;
   Object *m_neptune_trace;
 
+  std::vector<glm::mat4> m_inner_asteroid_belt;
+  Object *m_inner_asteroid1;
+  Object *m_inner_asteroid2;
+  Object *m_inner_asteroid3;
+
+  std::vector<glm::mat4> m_outer_asteroid_belt;
+  Object *m_outer_asteroid1;
+  Object *m_outer_asteroid2;
+  Object *m_outer_asteroid3;
+
+  Object *m_halleys;
+
   // Skybox
   GLuint skyboxVAO;
   GLuint skyboxVBO;

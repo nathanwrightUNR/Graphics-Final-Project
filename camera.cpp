@@ -6,10 +6,10 @@ Camera::~Camera() {}
 
 bool Camera::Initialize(int w, int h)
 {
-  this->position = glm::vec3(0.0f, 0.0f, 18.0f);
+  this->position = glm::vec3(0.0f, 9.0f, 55.0f);
   this->up = glm::vec3(0.0f, 1.0f, 0.0f);
   this->yaw = -90.0f;
-  this->pitch = 0.0f;
+  this->pitch = -15.0f;
 
   this->view = glm::lookAt(position, camera_front + position, up);
 

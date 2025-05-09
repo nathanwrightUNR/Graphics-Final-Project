@@ -44,6 +44,7 @@ bool Shader::AddShader(GLenum ShaderType)
       layout (location = 0) in vec3 v_position; \
       layout (location = 1) in vec2 v_tc;  \
       layout (location = 2) in vec3 v_normal; \
+      layout (location = 4) in mat4 imodelMatrix; \
       \
       out vec3 varNorm; \
       out vec2 tc; \
@@ -52,16 +53,19 @@ bool Shader::AddShader(GLenum ShaderType)
       uniform mat4 viewMatrix; \
       uniform mat4 modelMatrix; \
       uniform mat3 normMatrix; \
+      uniform bool instanced; \
       \
       void main(void) \
       { \
         vec4 v = vec4(v_position, 1.0); \
-        gl_Position = projectionMatrix * viewMatrix * modelMatrix * v; \
+        mat4 model = instanced ? imodelMatrix : modelMatrix; \
+        gl_Position = projectionMatrix * viewMatrix * model * v; \
         varNorm = normMatrix * v_normal; \
         tc = v_tc; \
       } \
       ";
   }
+
   else if (ShaderType == GL_FRAGMENT_SHADER)
   {
     s = "#version 410\n \

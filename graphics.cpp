@@ -152,7 +152,73 @@ bool Graphics::Initialize(int width, int height)
   glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
   // endof skybox rendering code
 
-  m_starship = new Mesh(glm::vec3(2.0f, 3.0f, -5.0f),
+  for (int i = 0; i < 200; i++)
+  {
+    float theta = glm::radians((float)(rand() % 360));
+    float r = 9.5f + (float)(rand() % 100) / 100.f;
+
+    float x = glm::cos(theta) * r;
+    float z = glm::sin(theta) * r;
+    float y = ((rand() % 100) - 50) * 0.01f;
+
+    glm::mat4 transform = glm::translate(glm::mat4(1.f), glm::vec3(x, y, z));
+    transform = glm::rotate(transform, glm::radians((float)(rand() % 360)), glm::vec3(0.f, 1.f, 0.f));
+    transform = glm::scale(transform, glm::vec3(0.1f));
+
+    m_inner_asteroid_belt.push_back(transform);
+  }
+
+  m_inner_asteroid1 = new Mesh(glm::vec3(2.f, 3.f, -5.f),
+                               "../assets/Asteroid/1132 T-3 Durech.obj");
+
+  m_inner_asteroid1->Instance(this->m_inner_asteroid_belt);
+
+  m_inner_asteroid2 = new Mesh(glm::vec3(2.f, 3.f, -5.f),
+                               "../assets/Asteroid/1978 XX Durech.obj");
+
+  m_inner_asteroid2->Instance(this->m_inner_asteroid_belt);
+
+  m_inner_asteroid3 = new Mesh(glm::vec3(2.f, 3.f, -5.f),
+                               "../assets/Asteroid/1998 DQ3 Durech.obj");
+
+  m_inner_asteroid3->Instance(this->m_inner_asteroid_belt);
+
+  for (int i = 0; i < 800; i++)
+  {
+    float theta = glm::radians((float)(rand() % 360));
+    float r = 24.5f + (float)(rand() % 300) / 100.f;
+
+    float x = glm::cos(theta) * r;
+    float z = glm::sin(theta) * r;
+    float y = ((rand() % 100) - 50) * 0.01f;
+    ;
+
+    glm::mat4 transform = glm::translate(glm::mat4(1.f), glm::vec3(x, y, z));
+    transform = glm::rotate(transform, glm::radians((float)(rand() % 360)), glm::vec3(0.f, 1.f, 0.f));
+    transform = glm::scale(transform, glm::vec3(0.1f));
+
+    m_outer_asteroid_belt.push_back(transform);
+  }
+
+  m_outer_asteroid1 = new Mesh(glm::vec3(2.f, 3.f, -5.f),
+                               "../assets/Asteroid/1132 T-3 Durech.obj");
+
+  m_outer_asteroid1->Instance(this->m_outer_asteroid_belt);
+
+  m_outer_asteroid2 = new Mesh(glm::vec3(2.f, 3.f, -5.f),
+                               "../assets/Asteroid/1978 XX Durech.obj");
+
+  m_outer_asteroid2->Instance(this->m_outer_asteroid_belt);
+
+  m_outer_asteroid3 = new Mesh(glm::vec3(2.f, 3.f, -5.f),
+                               "../assets/Asteroid/1998 DQ3 Durech.obj");
+
+  m_outer_asteroid3->Instance(this->m_outer_asteroid_belt);
+
+  m_halleys = new Mesh(glm::vec3(2.f, 3.f, -5.f),
+                       "../assets/Asteroid/Halley Giotto_Vega Stooke Model 1.obj");
+
+  m_starship = new Mesh(glm::vec3(2.f, 3.f, -5.f),
                         "../assets/SpaceShip-1/SpaceShip-1.obj",
                         "../assets/SpaceShip-1/SpaceShip-1.png");
 
@@ -500,6 +566,7 @@ void Graphics::Render()
   if (m_sun != NULL)
   {
     glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_sun->GetModel()));
+    glUniform1i(m_shader->GetUniformLocation("instanced"), false);
 
     if (m_sun->hasTex)
     {
@@ -540,6 +607,7 @@ void Graphics::Render()
   if (m_starship != NULL)
   {
     glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_starship->GetModel()));
+    glUniform1i(m_shader->GetUniformLocation("instanced"), false);
 
     if (m_starship->hasTex)
     {
@@ -580,6 +648,7 @@ void Graphics::Render()
   if (m_mercury != NULL)
   {
     glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_mercury->GetModel()));
+    glUniform1i(m_shader->GetUniformLocation("instanced"), false);
 
     if (m_mercury->hasTex)
     {
@@ -619,6 +688,7 @@ void Graphics::Render()
 
   if (m_mercury_trace != NULL)
   {
+    glUniform1i(m_shader->GetUniformLocation("instanced"), false);
     glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_mercury_trace->GetModel()));
     glUniform1i(m_hasTexture, false);
     glUniform1i(m_has_nmap, false);
@@ -629,6 +699,7 @@ void Graphics::Render()
   if (m_venus != NULL)
   {
     glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_venus->GetModel()));
+    glUniform1i(m_shader->GetUniformLocation("instanced"), false);
 
     if (m_venus->hasTex)
     {
@@ -668,6 +739,7 @@ void Graphics::Render()
 
   if (m_venus_trace != NULL)
   {
+    glUniform1i(m_shader->GetUniformLocation("instanced"), false);
     glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_venus_trace->GetModel()));
     glUniform1i(m_hasTexture, false);
     glUniform1i(m_has_nmap, false);
@@ -678,6 +750,7 @@ void Graphics::Render()
   if (m_earth != NULL)
   {
     glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_earth->GetModel()));
+    glUniform1i(m_shader->GetUniformLocation("instanced"), false);
 
     if (m_earth->hasTex)
     {
@@ -718,6 +791,7 @@ void Graphics::Render()
   if (m_moon != NULL)
   {
     glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_moon->GetModel()));
+    glUniform1i(m_shader->GetUniformLocation("instanced"), false);
 
     if (m_moon->hasTex)
     {
@@ -757,6 +831,7 @@ void Graphics::Render()
 
   if (m_earth_trace != NULL)
   {
+    glUniform1i(m_shader->GetUniformLocation("instanced"), false);
     glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_earth_trace->GetModel()));
     glUniform1i(m_hasTexture, false);
     glUniform1i(m_has_nmap, false);
@@ -767,6 +842,7 @@ void Graphics::Render()
   if (m_mars != NULL)
   {
     glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_mars->GetModel()));
+    glUniform1i(m_shader->GetUniformLocation("instanced"), false);
 
     if (m_mars->hasTex)
     {
@@ -806,6 +882,7 @@ void Graphics::Render()
 
   if (m_mars_trace != NULL)
   {
+    glUniform1i(m_shader->GetUniformLocation("instanced"), false);
     glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_mars_trace->GetModel()));
     glUniform1i(m_hasTexture, false);
     glUniform1i(m_has_nmap, false);
@@ -816,6 +893,7 @@ void Graphics::Render()
   if (m_jupiter != NULL)
   {
     glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_jupiter->GetModel()));
+    glUniform1i(m_shader->GetUniformLocation("instanced"), false);
 
     if (m_jupiter->hasTex)
     {
@@ -855,6 +933,7 @@ void Graphics::Render()
 
   if (m_jupiter_trace != NULL)
   {
+    glUniform1i(m_shader->GetUniformLocation("instanced"), false);
     glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_jupiter_trace->GetModel()));
     glUniform1i(m_hasTexture, false);
     glUniform1i(m_has_nmap, false);
@@ -865,6 +944,7 @@ void Graphics::Render()
   if (m_saturn != NULL)
   {
     glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_saturn->GetModel()));
+    glUniform1i(m_shader->GetUniformLocation("instanced"), false);
 
     if (m_saturn->hasTex)
     {
@@ -904,6 +984,7 @@ void Graphics::Render()
 
   if (m_saturn_trace != NULL)
   {
+    glUniform1i(m_shader->GetUniformLocation("instanced"), false);
     glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_saturn_trace->GetModel()));
     glUniform1i(m_hasTexture, false);
     glUniform1i(m_has_nmap, false);
@@ -914,6 +995,7 @@ void Graphics::Render()
   if (m_saturn_ring != NULL)
   {
     glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_saturn_ring->GetModel()));
+    glUniform1i(m_shader->GetUniformLocation("instanced"), false);
 
     if (m_saturn_ring->hasTex)
     {
@@ -954,6 +1036,7 @@ void Graphics::Render()
   if (m_uranus != NULL)
   {
     glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_uranus->GetModel()));
+    glUniform1i(m_shader->GetUniformLocation("instanced"), false);
 
     if (m_uranus->hasTex)
     {
@@ -993,6 +1076,7 @@ void Graphics::Render()
 
   if (m_uranus_trace != NULL)
   {
+    glUniform1i(m_shader->GetUniformLocation("instanced"), false);
     glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_uranus_trace->GetModel()));
     glUniform1i(m_hasTexture, false);
     glUniform1i(m_has_nmap, false);
@@ -1003,6 +1087,7 @@ void Graphics::Render()
   if (m_neptune != NULL)
   {
     glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_neptune->GetModel()));
+    glUniform1i(m_shader->GetUniformLocation("instanced"), false);
 
     if (m_neptune->hasTex)
     {
@@ -1042,11 +1127,52 @@ void Graphics::Render()
 
   if (m_neptune_trace != NULL)
   {
+    glUniform1i(m_shader->GetUniformLocation("instanced"), false);
     glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_neptune_trace->GetModel()));
     glUniform1i(m_hasTexture, false);
     glUniform1i(m_has_nmap, false);
 
     m_neptune_trace->Render(m_positionAttrib, m_colorAttrib, m_tcAttrib, m_hasTexture, m_NpAttrib, m_has_nmap);
+  }
+
+  glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(glm::mat4(1.f)));
+  glUniform1i(m_hasTexture, false);
+  glUniform1i(m_has_nmap, false);
+
+  if (m_inner_asteroid1 != NULL)
+  {
+    glUniform1i(m_shader->GetUniformLocation("instanced"), true);
+    m_inner_asteroid1->Render(m_positionAttrib, m_colorAttrib, m_tcAttrib, m_hasTexture, m_NpAttrib, m_has_nmap);
+  }
+
+  if (m_inner_asteroid2 != NULL)
+  {
+    glUniform1i(m_shader->GetUniformLocation("instanced"), true);
+    m_inner_asteroid2->Render(m_positionAttrib, m_colorAttrib, m_tcAttrib, m_hasTexture, m_NpAttrib, m_has_nmap);
+  }
+
+  if (m_inner_asteroid3 != NULL)
+  {
+    glUniform1i(m_shader->GetUniformLocation("instanced"), true);
+    m_inner_asteroid3->Render(m_positionAttrib, m_colorAttrib, m_tcAttrib, m_hasTexture, m_NpAttrib, m_has_nmap);
+  }
+
+  if (m_outer_asteroid1 != NULL)
+  {
+    glUniform1i(m_shader->GetUniformLocation("instanced"), true);
+    m_outer_asteroid1->Render(m_positionAttrib, m_colorAttrib, m_tcAttrib, m_hasTexture, m_NpAttrib, m_has_nmap);
+  }
+
+  if (m_outer_asteroid2 != NULL)
+  {
+    glUniform1i(m_shader->GetUniformLocation("instanced"), true);
+    m_outer_asteroid2->Render(m_positionAttrib, m_colorAttrib, m_tcAttrib, m_hasTexture, m_NpAttrib, m_has_nmap);
+  }
+
+  if (m_outer_asteroid3 != NULL)
+  {
+    glUniform1i(m_shader->GetUniformLocation("instanced"), true);
+    m_outer_asteroid3->Render(m_positionAttrib, m_colorAttrib, m_tcAttrib, m_hasTexture, m_NpAttrib, m_has_nmap);
   }
 
   // Get any errors from OpenGL
