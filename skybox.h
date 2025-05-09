@@ -3,7 +3,8 @@
 
 #include "shader.h"
 
-class Skybox : public Shader {
+class Skybox : public Shader
+{
 public:
     Skybox();
     ~Skybox();
@@ -11,8 +12,8 @@ public:
     void Enable() { glUseProgram(m_shaderProg); }
     bool AddShader(GLenum ShaderType);
     bool Finalize();
-    GLint GetUniformLocation(const char* pUniformName);
-    GLint GetAttribLocation(const char* pAttribName);
+    GLint GetUniformLocation(const char *pUniformName);
+    GLint GetAttribLocation(const char *pAttribName);
     GLuint GetShaderProgram() { return m_shaderProg; }
 
 private:
@@ -20,4 +21,4 @@ private:
     std::vector<GLuint> m_shaderObjList;
 };
 
-#endif //SKYBOX_H
+#endif // SKYBOX_H

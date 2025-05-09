@@ -59,82 +59,85 @@ bool Graphics::Initialize(int width, int height)
     return false;
   }
 
-  //Skybox
+  // Skybox
   m_skybox = new Skybox();
-  if (!m_skybox->Initialize()) {
-      printf("Skybox shader failed to initialize\n");
-      return false;
+  if (!m_skybox->Initialize())
+  {
+    printf("Skybox shader failed to initialize\n");
+    return false;
   }
 
-  if (!m_skybox->AddShader(GL_VERTEX_SHADER)) {
-      printf("Skybox vertex shader failed to initialize\n");
-      return false;
+  if (!m_skybox->AddShader(GL_VERTEX_SHADER))
+  {
+    printf("Skybox vertex shader failed to initialize\n");
+    return false;
   }
 
-  if (!m_skybox->AddShader(GL_FRAGMENT_SHADER)) {
-      printf("Skybox fragment shader failed to initialize\n");
-      return false;
+  if (!m_skybox->AddShader(GL_FRAGMENT_SHADER))
+  {
+    printf("Skybox fragment shader failed to initialize\n");
+    return false;
   }
 
-  if (!m_skybox->Finalize()) {
-      printf("Skybox shader failed to finalize\n");
-      return false;
+  if (!m_skybox->Finalize())
+  {
+    printf("Skybox shader failed to finalize\n");
+    return false;
   }
 
-  //populate location binding
+  // populate location binding
   if (!collectShPrLocs())
   {
     printf("Some shader attribs not located!\n");
     return false;
   }
 
-  //skybox
+  // skybox
   sbCubeMap = skyboxCubeMap();
 
-  //setup verticies and values for skybox
+  // setup verticies and values for skybox
   skyboxVertices = {
-    -1.0f,  1.0f, -1.0f,
-    -1.0f, -1.0f, -1.0f,
-    1.0f, -1.0f, -1.0f,
-    1.0f, -1.0f, -1.0f,
-    1.0f,  1.0f, -1.0f,
-    -1.0f,  1.0f, -1.0f,
+      -1.0f, 1.0f, -1.0f,
+      -1.0f, -1.0f, -1.0f,
+      1.0f, -1.0f, -1.0f,
+      1.0f, -1.0f, -1.0f,
+      1.0f, 1.0f, -1.0f,
+      -1.0f, 1.0f, -1.0f,
 
-    -1.0f, -1.0f,  1.0f,
-    -1.0f, -1.0f, -1.0f,
-    -1.0f,  1.0f, -1.0f,
-    -1.0f,  1.0f, -1.0f,
-    -1.0f,  1.0f,  1.0f,
-    -1.0f, -1.0f,  1.0f,
+      -1.0f, -1.0f, 1.0f,
+      -1.0f, -1.0f, -1.0f,
+      -1.0f, 1.0f, -1.0f,
+      -1.0f, 1.0f, -1.0f,
+      -1.0f, 1.0f, 1.0f,
+      -1.0f, -1.0f, 1.0f,
 
-    1.0f, -1.0f, -1.0f,
-    1.0f, -1.0f,  1.0f,
-    1.0f,  1.0f,  1.0f,
-    1.0f,  1.0f,  1.0f,
-    1.0f,  1.0f, -1.0f,
-    1.0f, -1.0f, -1.0f,
+      1.0f, -1.0f, -1.0f,
+      1.0f, -1.0f, 1.0f,
+      1.0f, 1.0f, 1.0f,
+      1.0f, 1.0f, 1.0f,
+      1.0f, 1.0f, -1.0f,
+      1.0f, -1.0f, -1.0f,
 
-    -1.0f, -1.0f,  1.0f,
-    -1.0f,  1.0f,  1.0f,
-    1.0f,  1.0f,  1.0f,
-    1.0f,  1.0f,  1.0f,
-    1.0f, -1.0f,  1.0f,
-    -1.0f, -1.0f,  1.0f,
+      -1.0f, -1.0f, 1.0f,
+      -1.0f, 1.0f, 1.0f,
+      1.0f, 1.0f, 1.0f,
+      1.0f, 1.0f, 1.0f,
+      1.0f, -1.0f, 1.0f,
+      -1.0f, -1.0f, 1.0f,
 
-    -1.0f,  1.0f, -1.0f,
-    1.0f,  1.0f, -1.0f,
-    1.0f,  1.0f,  1.0f,
-    1.0f,  1.0f,  1.0f,
-    -1.0f,  1.0f,  1.0f,
-    -1.0f,  1.0f, -1.0f,
+      -1.0f, 1.0f, -1.0f,
+      1.0f, 1.0f, -1.0f,
+      1.0f, 1.0f, 1.0f,
+      1.0f, 1.0f, 1.0f,
+      -1.0f, 1.0f, 1.0f,
+      -1.0f, 1.0f, -1.0f,
 
-    -1.0f, -1.0f, -1.0f,
-    -1.0f, -1.0f,  1.0f,
-    1.0f, -1.0f, -1.0f,
-    1.0f, -1.0f, -1.0f,
-    -1.0f, -1.0f,  1.0f,
-    1.0f, -1.0f,  1.0f
-  };
+      -1.0f, -1.0f, -1.0f,
+      -1.0f, -1.0f, 1.0f,
+      1.0f, -1.0f, -1.0f,
+      1.0f, -1.0f, -1.0f,
+      -1.0f, -1.0f, 1.0f,
+      1.0f, -1.0f, 1.0f};
 
   glGenVertexArrays(1, &skyboxVAO);
   glGenBuffers(1, &skyboxVBO);
@@ -146,8 +149,7 @@ bool Graphics::Initialize(int width, int height)
   glBindBuffer(GL_ARRAY_BUFFER, 0);
   glBindVertexArray(0);
   glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
-  //endof skybox rendering code
-
+  // endof skybox rendering code
 
   m_starship = new Mesh(glm::vec3(2.0f, 3.0f, -5.0f),
                         "../assets/SpaceShip-1/SpaceShip-1.obj",
@@ -167,7 +169,7 @@ bool Graphics::Initialize(int width, int height)
 
 Camera *Graphics::getCamera() { return this->m_camera; }
 
-void Graphics::HierarchicalUpdate2(double dt)
+void Graphics::Update(double dt)
 {
   std::vector<float> speed, dist, rotSpeed, scale;
   glm::vec3 rotVector;
@@ -254,14 +256,14 @@ void Graphics::Render()
   glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-  //skybox
+  // skybox
   m_skybox->Enable();
   glUniformMatrix4fv(m_skyboxProjMatrix, 1, GL_FALSE, glm::value_ptr(m_camera->GetProjection()));
   glUniformMatrix4fv(m_skyboxViewMatrix, 1, GL_FALSE, glm::value_ptr(m_camera->GetView()));
   GLint skyboxSampler = m_skybox->GetUniformLocation("samp");
   if (skyboxSampler == INVALID_UNIFORM_LOCATION)
   {
-      printf("Skybox sampler not found\n");
+    printf("Skybox sampler not found\n");
   }
   glUniform1i(skyboxSampler, 0);
   glDepthMask(GL_FALSE);
@@ -269,7 +271,7 @@ void Graphics::Render()
   glBindVertexArray(skyboxVAO);
   glEnableVertexAttribArray(m_skyboxPositionAttrib);
   glBindBuffer(GL_ARRAY_BUFFER, skyboxVBO);
-  glVertexAttribPointer(m_skyboxPositionAttrib, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
+  glVertexAttribPointer(m_skyboxPositionAttrib, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid *)0);
   glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_CUBE_MAP, sbCubeMap);
   glEnable(GL_CULL_FACE);
@@ -428,23 +430,26 @@ bool Graphics::collectShPrLocs()
     anyProblem = false;
   }
 
-  //skybox
+  // skybox
   m_skyboxProjMatrix = m_skybox->GetUniformLocation("proj_matrix");
-  if (m_skyboxProjMatrix == INVALID_UNIFORM_LOCATION) {
-      printf("skybox projmatrix not found\n");
-      anyProblem = false;
+  if (m_skyboxProjMatrix == INVALID_UNIFORM_LOCATION)
+  {
+    printf("skybox projmatrix not found\n");
+    anyProblem = false;
   }
 
   m_skyboxViewMatrix = m_skybox->GetUniformLocation("v_matrix");
-  if (m_skyboxViewMatrix == INVALID_UNIFORM_LOCATION) {
-      printf("skybox vmatrix not found\n");
-      anyProblem = false;
+  if (m_skyboxViewMatrix == INVALID_UNIFORM_LOCATION)
+  {
+    printf("skybox vmatrix not found\n");
+    anyProblem = false;
   }
 
   m_skyboxPositionAttrib = m_skybox->GetAttribLocation("position");
-  if (m_skyboxPositionAttrib == INVALID_UNIFORM_LOCATION) {
-      printf("skybox position not found\n");
-      anyProblem = false;
+  if (m_skyboxPositionAttrib == INVALID_UNIFORM_LOCATION)
+  {
+    printf("skybox position not found\n");
+    anyProblem = false;
   }
 
   return anyProblem;
@@ -482,86 +487,90 @@ std::string Graphics::ErrorString(GLenum error)
   }
 }
 
-GLuint Graphics::skyboxCubeMap() {
-    GLuint textureID;
-    int w, h, c;
+GLuint Graphics::skyboxCubeMap()
+{
+  GLuint textureID;
+  int w, h, c;
 
-    std::string horizontalCrossPath = "../assets/Cubemaps/Galaxy-cubemap2.png";
+  std::string horizontalCrossPath = "../assets/Cubemaps/Galaxy-cubemap2.png";
 
-    // Load the horizontal cross image using SOIL
-    unsigned char* data = SOIL_load_image(horizontalCrossPath.c_str(), &w, &h, &c, SOIL_LOAD_AUTO);
-    if (!data) {
-        std::cerr << "Failed to load horizontal cross cubemap image: " << horizontalCrossPath << std::endl;
-        return 0;
-    }
+  // Load the horizontal cross image using SOIL
+  unsigned char *data = SOIL_load_image(horizontalCrossPath.c_str(), &w, &h, &c, SOIL_LOAD_AUTO);
+  if (!data)
+  {
+    std::cerr << "Failed to load horizontal cross cubemap image: " << horizontalCrossPath << std::endl;
+    return 0;
+  }
 
-    // Calculate the size of each face (assuming a 4x3 layout)
-    int faceWidth = w / 4;
-    int faceHeight = h / 3;
+  // Calculate the size of each face (assuming a 4x3 layout)
+  int faceWidth = w / 4;
+  int faceHeight = h / 3;
 
-    if (faceWidth != faceHeight) {
-        std::cerr << "Error: Cubemap faces are not square!" << std::endl;
-        SOIL_free_image_data(data);
-        return 0;
-    }
-
-    // Create the cubemap texture
-    glGenTextures(1, &textureID);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
-
-    // Define the offsets for each face in the horizontal cross layout
-    struct FaceOffset {
-        int x, y;
-    };
-    FaceOffset faceOffsets[6] = {
-        {2, 1}, // +X (right)
-        {0, 1}, // -X (left)
-        {1, 0}, // +Y (top)
-        {1, 2}, // -Y (bottom)
-        {1, 1}, // +Z (front)
-        {3, 1}  // -Z (back)
-    };
-
-    // Extract and upload each face
-    for (int i = 0; i < 6; ++i) {
-        int xOffset = faceOffsets[i].x * faceWidth;
-        int yOffset = faceOffsets[i].y * faceHeight;
-
-        // Extract the face data
-        unsigned char* faceData = new unsigned char[faceWidth * faceHeight * c];
-        for (int row = 0; row < faceHeight; ++row) {
-            memcpy(
-                faceData + row * faceWidth * c,
-                data + ((yOffset + row) * w + xOffset) * c,
-                faceWidth * c
-            );
-        }
-
-        // Upload the face to the cubemap
-        glTexImage2D(
-            GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
-            0, 
-            c == 4 ? GL_RGBA : GL_RGB,
-            faceWidth,
-            faceHeight,
-            0,
-            c == 4 ? GL_RGBA : GL_RGB,
-            GL_UNSIGNED_BYTE,
-            faceData
-        );
-
-        delete[] faceData;
-    }
-
-    // Free the original image data
+  if (faceWidth != faceHeight)
+  {
+    std::cerr << "Error: Cubemap faces are not square!" << std::endl;
     SOIL_free_image_data(data);
+    return 0;
+  }
 
-    // Set texture parameters
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+  // Create the cubemap texture
+  glGenTextures(1, &textureID);
+  glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
 
-    return textureID;
+  // Define the offsets for each face in the horizontal cross layout
+  struct FaceOffset
+  {
+    int x, y;
+  };
+  FaceOffset faceOffsets[6] = {
+      {2, 1}, // +X (right)
+      {0, 1}, // -X (left)
+      {1, 0}, // +Y (top)
+      {1, 2}, // -Y (bottom)
+      {1, 1}, // +Z (front)
+      {3, 1}  // -Z (back)
+  };
+
+  // Extract and upload each face
+  for (int i = 0; i < 6; ++i)
+  {
+    int xOffset = faceOffsets[i].x * faceWidth;
+    int yOffset = faceOffsets[i].y * faceHeight;
+
+    // Extract the face data
+    unsigned char *faceData = new unsigned char[faceWidth * faceHeight * c];
+    for (int row = 0; row < faceHeight; ++row)
+    {
+      memcpy(
+          faceData + row * faceWidth * c,
+          data + ((yOffset + row) * w + xOffset) * c,
+          faceWidth * c);
+    }
+
+    // Upload the face to the cubemap
+    glTexImage2D(
+        GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
+        0,
+        c == 4 ? GL_RGBA : GL_RGB,
+        faceWidth,
+        faceHeight,
+        0,
+        c == 4 ? GL_RGBA : GL_RGB,
+        GL_UNSIGNED_BYTE,
+        faceData);
+
+    delete[] faceData;
+  }
+
+  // Free the original image data
+  SOIL_free_image_data(data);
+
+  // Set texture parameters
+  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+
+  return textureID;
 }

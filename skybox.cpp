@@ -1,9 +1,11 @@
 #include "skybox.h"
 
-Skybox::Skybox(){
+Skybox::Skybox()
+{
 }
 
-Skybox::~Skybox(){
+Skybox::~Skybox()
+{
     for (std::vector<GLuint>::iterator shader = m_shaderObjList.begin(); shader != m_shaderObjList.end(); shader++)
     {
         glDeleteShader(*shader);
@@ -16,7 +18,8 @@ Skybox::~Skybox(){
     }
 }
 
-bool Skybox::Initialize(){
+bool Skybox::Initialize()
+{
     m_shaderProg = glCreateProgram();
 
     if (m_shaderProg == 0)
@@ -28,13 +31,14 @@ bool Skybox::Initialize(){
     return true;
 }
 
-bool Skybox::AddShader(GLenum ShaderType){
+bool Skybox::AddShader(GLenum ShaderType)
+{
     std::string s;
 
     if (ShaderType == GL_VERTEX_SHADER)
     {
         s = R"(
-        #version 460
+        #version 410 
 
         layout(location = 0) in vec3 position;
         out vec3 tc;
@@ -53,12 +57,12 @@ bool Skybox::AddShader(GLenum ShaderType){
     else if (ShaderType == GL_FRAGMENT_SHADER)
     {
         s = R"(
-        #version 460
+        #version 410 
 
         in vec3 tc;
         out vec4 fragColor;
 
-        layout(binding = 0) uniform samplerCube samp;
+        uniform samplerCube samp;
 
         void main(void)
         {
@@ -66,7 +70,8 @@ bool Skybox::AddShader(GLenum ShaderType){
         }
         )";
     }
-    else {
+    else
+    {
         std::cerr << "Unsupported shader type: " << ShaderType << std::endl;
         return false;
     }
@@ -80,7 +85,7 @@ bool Skybox::AddShader(GLenum ShaderType){
 
     m_shaderObjList.push_back(ShaderObj);
 
-    const GLchar* source = s.c_str();
+    const GLchar *source = s.c_str();
     GLint length = static_cast<GLint>(s.size());
     glShaderSource(ShaderObj, 1, &source, &length);
 
@@ -102,9 +107,10 @@ bool Skybox::AddShader(GLenum ShaderType){
     return true;
 }
 
-bool Skybox::Finalize() {
+bool Skybox::Finalize()
+{
     GLint Success = 0;
-    GLchar ErrorLog[1024] = { 0 };
+    GLchar ErrorLog[1024] = {0};
 
     glLinkProgram(m_shaderProg);
 
@@ -116,6 +122,7 @@ bool Skybox::Finalize() {
         return false;
     }
 
+#if !defined(__APPLE__) && !defined(MACOSX)
     glValidateProgram(m_shaderProg);
     glGetProgramiv(m_shaderProg, GL_VALIDATE_STATUS, &Success);
     if (!Success)
@@ -124,7 +131,7 @@ bool Skybox::Finalize() {
         std::cerr << "Invalid shader program: " << ErrorLog << std::endl;
         return false;
     }
-
+#endif
     for (std::vector<GLuint>::iterator it = m_shaderObjList.begin(); it != m_shaderObjList.end(); it++)
     {
         glDeleteShader(*it);
@@ -135,25 +142,26 @@ bool Skybox::Finalize() {
     return true;
 }
 
-GLint Skybox::GetUniformLocation(const char* pUniformName)
+GLint Skybox::GetUniformLocation(const char *pUniformName)
+{
+    GLuint Location = glGetUniformLocation(m_shaderProg, pUniformName);
+
+    if (Location == INVALID_UNIFORM_LOCATION)
     {
-        GLuint Location = glGetUniformLocation(m_shaderProg, pUniformName);
-
-        if (Location == INVALID_UNIFORM_LOCATION) {
-            fprintf(stderr, "Warning! Unable to get the location of uniform '%s'\n", pUniformName);
-        }
-
-        return Location;
+        fprintf(stderr, "Warning! Unable to get the location of uniform '%s'\n", pUniformName);
     }
 
-GLint Skybox::GetAttribLocation(const char* pAttribName)
+    return Location;
+}
+
+GLint Skybox::GetAttribLocation(const char *pAttribName)
+{
+    GLuint Location = glGetAttribLocation(m_shaderProg, pAttribName);
+
+    if (Location == -1)
     {
-        GLuint Location = glGetAttribLocation(m_shaderProg, pAttribName);
-
-        if (Location == -1) {
-            fprintf(stderr, "Warning! Unable to get the location of attribute '%s'\n", pAttribName);
-        }
-
-        return Location;
+        fprintf(stderr, "Warning! Unable to get the location of attribute '%s'\n", pAttribName);
     }
 
+    return Location;
+}

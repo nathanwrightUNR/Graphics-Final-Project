@@ -49,7 +49,7 @@ public:
    */
   bool Initialize(int width, int height);
 
-  void HierarchicalUpdate2(double dt);
+  void Update(double dt);
 
   /**
    * @brief
@@ -95,7 +95,7 @@ private:
   // Skybox
   GLuint skyboxVAO;
   GLuint skyboxVBO;
-  Skybox* m_skybox;
+  Skybox *m_skybox;
   GLint m_skyboxProjMatrix;
   GLint m_skyboxViewMatrix;
   GLint m_skyboxPositionAttrib;
