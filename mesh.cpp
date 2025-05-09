@@ -24,6 +24,7 @@ Mesh::Mesh(glm::vec3 pivot, const char *fname)
   }
 
   hasTex = false;
+  hasNmap = false;
 }
 
 Mesh::Mesh(glm::vec3 pivot, const char *fname, const char *tname)
@@ -48,6 +49,8 @@ Mesh::Mesh(glm::vec3 pivot, const char *fname, const char *tname)
     hasTex = true;
   else
     hasTex = false;
+
+  hasNmap = false;
 }
 
 bool Mesh::loadModelFromFile(const char *path)

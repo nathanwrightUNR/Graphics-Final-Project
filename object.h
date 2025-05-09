@@ -44,10 +44,10 @@ public:
    */
   glm::mat4 GetModel();
 
-  bool hasTex;
+  bool hasTex = false;
   GLuint getTextureID() { return m_texture ? m_texture->getTextureID() : 0; }
 
-  bool is_lit = true;
+  bool hasNmap = false;
   GLuint getNormalMapID() { return m_normal_map ? m_normal_map->getTextureID() : 0; }
 
 protected:
