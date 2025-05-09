@@ -161,43 +161,43 @@ bool Graphics::Initialize(int width, int height)
   m_mercury = new Sphere(64, "../assets/Planetary Textures/Mercury.jpg",
                          "../assets/Planetary Textures/Mercury-n.jpg");
 
-  m_mercury_trace = new Ring(64, 4.45, 4.55);
+  m_mercury_trace = new Ring(64, 4.425, 4.575);
 
   m_venus = new Sphere(64, "../assets/Planetary Textures/Venus.jpg",
                        "../assets/Planetary Textures/Venus-n.jpg");
 
-  m_venus_trace = new Ring(64, 2.95, 3.05);
+  m_venus_trace = new Ring(64, 2.925, 3.075);
 
   m_earth = new Sphere(64, "../assets/Planetary Textures/2k_earth_daymap.jpg",
                        "../assets/Planetary Textures/2k_earth_daymap-n.jpg");
 
-  m_earth_trace = new Ring(64, 5.95, 6.05);
+  m_earth_trace = new Ring(64, 5.925, 6.075);
 
   m_mars = new Sphere(64, "../assets/Planetary Textures/Mars.jpg",
                       "../assets/Planetary Textures/Mars-n.jpg");
 
-  m_mars_trace = new Ring(64, 7.95, 8.05);
+  m_mars_trace = new Ring(64, 7.925, 8.075);
 
   m_jupiter = new Sphere(64, "../assets/Planetary Textures/Jupiter.jpg",
                          "../assets/Planetary Textures/Jupiter-n.jpg");
 
-  m_jupiter_trace = new Ring(64, 11.95, 12.05);
+  m_jupiter_trace = new Ring(64, 11.925, 12.075);
 
   m_saturn = new Sphere(64, "../assets/Planetary Textures/Saturn.jpg");
 
-  m_saturn_trace = new Ring(64, 15.95, 16.05);
+  m_saturn_trace = new Ring(64, 15.925, 16.075);
 
   m_saturn_ring = new Ring(128, 1.3, 2, "../assets/Planetary Textures/Saturn_ring.png");
 
   m_uranus = new Sphere(64, "../assets/Planetary Textures/Uranus.jpg",
                         "../assets/Planetary Textures/Uranus-n.jpg");
 
-  m_uranus_trace = new Ring(64, 20.95, 21.05);
+  m_uranus_trace = new Ring(64, 20.925, 21.075);
 
   m_neptune = new Sphere(64, "../assets/Planetary Textures/Neptune.jpg",
                          "../assets/Planetary Textures/Neptune-n.jpg");
 
-  m_neptune_trace = new Ring(64, 22.95, 23.05);
+  m_neptune_trace = new Ring(64, 22.925, 23.075);
 
   glEnable(GL_DEPTH_TEST);
   glDepthFunc(GL_LESS);
@@ -209,6 +209,9 @@ Camera *Graphics::getCamera() { return this->m_camera; }
 
 void Graphics::Update(double dt)
 {
+  std::vector<float> speed, dist, rotSpeed, scale;
+  glm::vec3 rotVector;
+
   float r, theta, x, z;
   glm::mat4 localTransform;
 
@@ -243,7 +246,7 @@ void Graphics::Update(double dt)
   z = r * glm::sin(theta);
   localTransform = glm::mat4(1.);
   localTransform *= glm::translate(glm::mat4(1.0f), glm::vec3(x, 0.0f, z));
-  localTransform *= glm::scale(glm::mat4(1.f), glm::vec3(.2));
+  localTransform *= glm::scale(glm::mat4(1.f), glm::vec3(.4));
 
   if (m_mercury != NULL)
     m_mercury->Update(localTransform);
@@ -258,7 +261,7 @@ void Graphics::Update(double dt)
   z = r * glm::sin(theta);
   localTransform = glm::mat4(1.);
   localTransform *= glm::translate(glm::mat4(1.0f), glm::vec3(x, 0.0f, z));
-  localTransform *= glm::scale(glm::mat4(1.f), glm::vec3(.4));
+  localTransform *= glm::scale(glm::mat4(1.f), glm::vec3(.5));
 
   if (m_venus != NULL)
     m_venus->Update(localTransform);
@@ -273,7 +276,7 @@ void Graphics::Update(double dt)
   z = r * glm::sin(theta);
   localTransform = glm::mat4(1.);
   localTransform *= glm::translate(glm::mat4(1.0f), glm::vec3(x, 0.0f, z));
-  localTransform *= glm::scale(glm::mat4(1.f), glm::vec3(.4));
+  localTransform *= glm::scale(glm::mat4(1.f), glm::vec3(.5));
 
   if (m_earth != NULL)
     m_earth->Update(localTransform);
@@ -288,7 +291,7 @@ void Graphics::Update(double dt)
   z = r * glm::sin(theta);
   localTransform = glm::mat4(1.);
   localTransform *= glm::translate(glm::mat4(1.0f), glm::vec3(x, 0.0f, z));
-  localTransform *= glm::scale(glm::mat4(1.f), glm::vec3(.3));
+  localTransform *= glm::scale(glm::mat4(1.f), glm::vec3(.4));
 
   if (m_mars != NULL)
     m_mars->Update(localTransform);
