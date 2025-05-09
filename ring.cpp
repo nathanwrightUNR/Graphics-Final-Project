@@ -1,39 +1,5 @@
 #include "ring.h"
 
-Ring::Ring(int prec, const char *path)
-{
-  this->prec = prec;
-  this->createVertices();
-  this->InitBuffers();
-  this->setupModelMatrix(glm::vec3(0., 0., 0.), 0., 1.);
-
-  m_texture = new Texture(path);
-  if (m_texture)
-    hasTex = true;
-  else
-    hasTex = false;
-}
-
-Ring::Ring(int prec, const char *tf, const char *nf)
-{
-  this->prec = prec;
-  this->createVertices();
-  this->InitBuffers();
-  this->setupModelMatrix(glm::vec3(0., 0., 0.), 0., 1.);
-
-  m_texture = new Texture(tf);
-  if (m_texture)
-    hasTex = true;
-  else
-    hasTex = false;
-
-  m_normal_map = new Texture(nf);
-  if (m_normal_map)
-    hasNmap = true;
-  else
-    hasNmap = false;
-}
-
 Ring::Ring(int prec, float inner_r, float outer_r, const char *tf, const char *nf)
 {
   this->prec = prec;
