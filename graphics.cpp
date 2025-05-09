@@ -192,7 +192,7 @@ bool Graphics::Initialize(int width, int height)
   m_uranus = new Sphere(64, "../assets/Planetary Textures/Uranus.jpg",
                         "../assets/Planetary Textures/Uranus-n.jpg");
 
-  m_uranus_trace = new Ring(64, 20.925, 21.075);
+  m_uranus_trace = new Ring(64, 18.925, 19.075);
 
   m_neptune = new Sphere(64, "../assets/Planetary Textures/Neptune.jpg",
                          "../assets/Planetary Textures/Neptune-n.jpg");
@@ -220,7 +220,8 @@ void Graphics::Update(double dt)
   theta = glm::radians(0.);
   x = r * glm::cos(theta);
   z = r * glm::sin(theta);
-  localTransform = glm::mat4(1.);
+  this->modelStack.push(glm::translate(glm::mat4(1.f), glm::vec3(0, 0, 0)));
+  localTransform = this->modelStack.top();
   localTransform *= glm::translate(glm::mat4(1.0f), glm::vec3(x, 0.0f, z));
 
   if (m_sun != NULL)
@@ -233,20 +234,29 @@ void Graphics::Update(double dt)
   z = r * glm::sin(theta);
   localTransform = glm::mat4(1.);
   localTransform *= glm::translate(glm::mat4(1.0f), glm::vec3(x, 0.0f, z));
+  // this->modelStack.pop();
 
   localTransform *= glm::scale(glm::mat4(1.f), glm::vec3(0.01));
 
   if (m_starship != NULL)
     m_starship->Update(localTransform);
 
-  // position of mercury
-  r = 3.;
-  theta = glm::radians(345.);
-  x = r * glm::cos(theta);
-  z = r * glm::sin(theta);
-  localTransform = glm::mat4(1.);
-  localTransform *= glm::translate(glm::mat4(1.0f), glm::vec3(x, 0.0f, z));
-  localTransform *= glm::scale(glm::mat4(1.f), glm::vec3(.4));
+  // animate mercury
+  speed = {1., 0., 1.};
+  dist = {3., 0., 3.};
+  rotVector = {0., 1., 0.};
+  rotSpeed = {1.5, 1.5, 1.5};
+  scale = {.4, .4, .4};
+
+  localTransform = this->modelStack.top();
+  localTransform *= glm::translate(glm::mat4(1.f),
+                                   glm::vec3(cos(speed[0] * dt) * dist[0],
+                                             0.f,
+                                             sin(speed[2] * dt) * dist[2]));
+  this->modelStack.push(localTransform);
+  localTransform *= glm::rotate(glm::mat4(1.f), rotSpeed[0] * (float)dt, rotVector);
+  localTransform *= glm::scale(glm::vec3(scale[0], scale[1], scale[2]));
+  this->modelStack.pop();
 
   if (m_mercury != NULL)
     m_mercury->Update(localTransform);
@@ -254,14 +264,21 @@ void Graphics::Update(double dt)
   if (m_mercury_trace != NULL)
     m_mercury_trace->Update(glm::rotate(glm::mat4(1.f), glm::radians(-90.f), glm::vec3(1, 0, 0)));
 
-  // position venus
-  r = 4.5;
-  theta = glm::radians(15.);
-  x = r * glm::cos(theta);
-  z = r * glm::sin(theta);
-  localTransform = glm::mat4(1.);
-  localTransform *= glm::translate(glm::mat4(1.0f), glm::vec3(x, 0.0f, z));
-  localTransform *= glm::scale(glm::mat4(1.f), glm::vec3(.5));
+  // animate venus
+  speed = {0.625, 0., 0.625};
+  dist = {4.5, 0., 4.5};
+  rotSpeed = {1., 1., 1.};
+  scale = {.5, .5, .5};
+
+  localTransform = this->modelStack.top();
+  localTransform *= glm::translate(glm::mat4(1.f),
+                                   glm::vec3(cos(speed[0] * dt) * dist[0],
+                                             0.f,
+                                             sin(speed[2] * dt) * dist[2]));
+  this->modelStack.push(localTransform);
+  localTransform *= glm::rotate(glm::mat4(1.f), rotSpeed[0] * (float)dt, rotVector);
+  localTransform *= glm::scale(glm::vec3(scale[0], scale[1], scale[2]));
+  this->modelStack.pop();
 
   if (m_venus != NULL)
     m_venus->Update(localTransform);
@@ -269,14 +286,22 @@ void Graphics::Update(double dt)
   if (m_venus_trace != NULL)
     m_venus_trace->Update(glm::rotate(glm::mat4(1.f), glm::radians(-90.f), glm::vec3(1, 0, 0)));
 
-  // position of earth
-  r = 6.;
-  theta = glm::radians(225.);
-  x = r * glm::cos(theta);
-  z = r * glm::sin(theta);
-  localTransform = glm::mat4(1.);
-  localTransform *= glm::translate(glm::mat4(1.0f), glm::vec3(x, 0.0f, z));
-  localTransform *= glm::scale(glm::mat4(1.f), glm::vec3(.5));
+  // animate earth
+  speed = {.5, 0., .5};
+  dist = {6., 0., 6.};
+  rotVector = {0., 1., 0.};
+  rotSpeed = {1., 1., 1.};
+  scale = {.5, .5, .5};
+
+  localTransform = this->modelStack.top();
+  localTransform *= glm::translate(glm::mat4(1.f),
+                                   glm::vec3(cos(speed[0] * dt) * dist[0],
+                                             0.f,
+                                             sin(speed[2] * dt) * dist[2]));
+  this->modelStack.push(localTransform);
+  localTransform *= glm::rotate(glm::mat4(1.f), rotSpeed[0] * (float)dt, rotVector);
+  localTransform *= glm::scale(glm::vec3(scale[0], scale[1], scale[2]));
+  this->modelStack.pop();
 
   if (m_earth != NULL)
     m_earth->Update(localTransform);
@@ -284,14 +309,22 @@ void Graphics::Update(double dt)
   if (m_earth_trace != NULL)
     m_earth_trace->Update(glm::rotate(glm::mat4(1.f), glm::radians(-90.f), glm::vec3(1, 0, 0)));
 
-  // position of mars
-  r = 8.;
-  theta = glm::radians(80.);
-  x = r * glm::cos(theta);
-  z = r * glm::sin(theta);
-  localTransform = glm::mat4(1.);
-  localTransform *= glm::translate(glm::mat4(1.0f), glm::vec3(x, 0.0f, z));
-  localTransform *= glm::scale(glm::mat4(1.f), glm::vec3(.4));
+  // animate mars
+  speed = {0.4, 0., 0.4};
+  dist = {8., 0., 8.};
+  rotVector = {0., 1., 0.};
+  rotSpeed = {0.75, 0.75, 0.75};
+  scale = {.4, .4, .4};
+
+  localTransform = this->modelStack.top();
+  localTransform *= glm::translate(glm::mat4(1.f),
+                                   glm::vec3(cos(speed[0] * dt) * dist[0],
+                                             0.f,
+                                             sin(speed[2] * dt) * dist[2]));
+  this->modelStack.push(localTransform);
+  localTransform *= glm::rotate(glm::mat4(1.f), rotSpeed[0] * (float)dt, rotVector);
+  localTransform *= glm::scale(glm::vec3(scale[0], scale[1], scale[2]));
+  this->modelStack.pop();
 
   if (m_mars != NULL)
     m_mars->Update(localTransform);
@@ -299,14 +332,22 @@ void Graphics::Update(double dt)
   if (m_mars_trace != NULL)
     m_mars_trace->Update(glm::rotate(glm::mat4(1.f), glm::radians(-90.f), glm::vec3(1, 0, 0)));
 
-  // position of jupiter
-  r = 12.;
-  theta = glm::radians(300.);
-  x = r * glm::cos(theta);
-  z = r * glm::sin(theta);
-  localTransform = glm::mat4(1.);
-  localTransform *= glm::translate(glm::mat4(1.0f), glm::vec3(x, 0.0f, z));
-  localTransform *= glm::scale(glm::mat4(1.f), glm::vec3(.9));
+  // animate jupiter
+  speed = {.275, 0., .275};
+  dist = {12., 0., 12.};
+  rotVector = {0., 1., 0.};
+  rotSpeed = {0.5, 0.5, 0.5};
+  scale = {.9, .9, .9};
+
+  localTransform = this->modelStack.top();
+  localTransform *= glm::translate(glm::mat4(1.f),
+                                   glm::vec3(cos(speed[0] * dt) * dist[0],
+                                             0.f,
+                                             sin(speed[2] * dt) * dist[2]));
+  this->modelStack.push(localTransform);
+  localTransform *= glm::rotate(glm::mat4(1.f), rotSpeed[0] * (float)dt, rotVector);
+  localTransform *= glm::scale(glm::vec3(scale[0], scale[1], scale[2]));
+  this->modelStack.pop();
 
   if (m_jupiter != NULL)
     m_jupiter->Update(localTransform);
@@ -314,14 +355,22 @@ void Graphics::Update(double dt)
   if (m_jupiter_trace != NULL)
     m_jupiter_trace->Update(glm::rotate(glm::mat4(1.f), glm::radians(-90.f), glm::vec3(1, 0, 0)));
 
-  // position of saturn
-  r = 16.;
-  theta = glm::radians(0.);
-  x = r * glm::cos(theta);
-  z = r * glm::sin(theta);
-  localTransform = glm::mat4(1.);
-  localTransform *= glm::translate(glm::mat4(1.0f), glm::vec3(x, 0.0f, z));
-  localTransform *= glm::scale(glm::mat4(1.f), glm::vec3(.8));
+  // animate saturn
+  speed = {.175, 0., .175};
+  dist = {16., 0., 16.};
+  rotVector = {0., 1., 0.};
+  rotSpeed = {0.4, 0.4, 0.4};
+  scale = {.8, .8, .8};
+
+  localTransform = this->modelStack.top();
+  localTransform *= glm::translate(glm::mat4(1.f),
+                                   glm::vec3(cos(speed[0] * dt) * dist[0],
+                                             0.f,
+                                             sin(speed[2] * dt) * dist[2]));
+  this->modelStack.push(localTransform);
+  localTransform *= glm::rotate(glm::mat4(1.f), rotSpeed[0] * (float)dt, rotVector);
+  localTransform *= glm::scale(glm::vec3(scale[0], scale[1], scale[2]));
+  this->modelStack.pop();
 
   if (m_saturn != NULL)
     m_saturn->Update(localTransform);
@@ -335,14 +384,22 @@ void Graphics::Update(double dt)
   if (m_saturn_ring != NULL)
     m_saturn_ring->Update(localTransform);
 
-  // position of uranus
-  r = 21.;
-  theta = glm::radians(200.);
-  x = r * glm::cos(theta);
-  z = r * glm::sin(theta);
-  localTransform = glm::mat4(1.);
-  localTransform *= glm::translate(glm::mat4(1.0f), glm::vec3(x, 0.0f, z));
-  localTransform *= glm::scale(glm::mat4(1.f), glm::vec3(.6));
+  // animate uranus
+  speed = {0.125, 0., 0.125};
+  dist = {19., 0., 19.};
+  rotVector = {0., 1., 0.};
+  rotSpeed = {0.3, 0.3, 0.3};
+  scale = {.6, .6, .6};
+
+  localTransform = this->modelStack.top();
+  localTransform *= glm::translate(glm::mat4(1.f),
+                                   glm::vec3(cos(speed[0] * dt) * dist[0],
+                                             0.f,
+                                             sin(speed[2] * dt) * dist[2]));
+  this->modelStack.push(localTransform);
+  localTransform *= glm::rotate(glm::mat4(1.f), rotSpeed[0] * (float)dt, rotVector);
+  localTransform *= glm::scale(glm::vec3(scale[0], scale[1], scale[2]));
+  this->modelStack.pop();
 
   if (m_uranus != NULL)
     m_uranus->Update(localTransform);
@@ -350,14 +407,22 @@ void Graphics::Update(double dt)
   if (m_uranus_trace != NULL)
     m_uranus_trace->Update(glm::rotate(glm::mat4(1.f), glm::radians(-90.f), glm::vec3(1, 0, 0)));
 
-  // position of neptune
-  r = 23.;
-  theta = glm::radians(250.);
-  x = r * glm::cos(theta);
-  z = r * glm::sin(theta);
-  localTransform = glm::mat4(1.);
-  localTransform *= glm::translate(glm::mat4(1.0f), glm::vec3(x, 0.0f, z));
-  localTransform *= glm::scale(glm::mat4(1.f), glm::vec3(.6));
+  // animate neptune
+  speed = {.1, 0., .1};
+  dist = {23., 0., 23.};
+  rotVector = {0., 1., 0.};
+  rotSpeed = {0.25, 0.25, 0.25};
+  scale = {.6, .6, .6};
+
+  localTransform = this->modelStack.top();
+  localTransform *= glm::translate(glm::mat4(1.f),
+                                   glm::vec3(cos(speed[0] * dt) * dist[0],
+                                             0.f,
+                                             sin(speed[2] * dt) * dist[2]));
+  this->modelStack.push(localTransform);
+  localTransform *= glm::rotate(glm::mat4(1.f), rotSpeed[0] * (float)dt, rotVector);
+  localTransform *= glm::scale(glm::vec3(scale[0], scale[1], scale[2]));
+  this->modelStack.pop();
 
   if (m_neptune != NULL)
     m_neptune->Update(localTransform);
