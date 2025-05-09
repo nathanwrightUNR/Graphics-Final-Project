@@ -72,23 +72,30 @@ bool Graphics::Initialize(int width, int height)
 
   m_sun = new Sphere(64, "../assets/Planetary Textures/2k_sun.jpg");
 
-  m_mercury = new Sphere(64, "../assets/Planetary Textures/Mercury.jpg");
+  m_mercury = new Sphere(64, "../assets/Planetary Textures/Mercury.jpg",
+                         "../assets/Planetary Textures/Mercury-n.jpg");
 
-  m_venus = new Sphere(64, "../assets/Planetary Textures/Venus.jpg");
+  m_venus = new Sphere(64, "../assets/Planetary Textures/Venus.jpg",
+                       "../assets/Planetary Textures/Venus-n.jpg");
 
-  m_earth = new Sphere(64, "../assets/Planetary Textures/2k_earth_daymap.jpg");
+  m_earth = new Sphere(64, "../assets/Planetary Textures/2k_earth_daymap.jpg",
+                       "../assets/Planetary Textures/2k_earth_daymap-n.jpg");
 
-  m_mars = new Sphere(64, "../assets/Planetary Textures/Mars.jpg");
+  m_mars = new Sphere(64, "../assets/Planetary Textures/Mars.jpg",
+                      "../assets/Planetary Textures/Mars-n.jpg");
 
-  m_jupiter = new Sphere(64, "../assets/Planetary Textures/Jupiter.jpg");
+  m_jupiter = new Sphere(64, "../assets/Planetary Textures/Jupiter.jpg",
+                         "../assets/Planetary Textures/Jupiter-n.jpg");
 
   m_saturn = new Sphere(64, "../assets/Planetary Textures/Saturn.jpg");
 
   m_saturn_ring = new Ring(128, 1.3, 2, "../assets/Planetary Textures/Saturn_ring.png");
 
-  m_uranus = new Sphere(64, "../assets/Planetary Textures/Uranus.jpg");
+  m_uranus = new Sphere(64, "../assets/Planetary Textures/Uranus.jpg",
+                        "../assets/Planetary Textures/Uranus-n.jpg");
 
-  m_neptune = new Sphere(64, "../assets/Planetary Textures/Neptune.jpg");
+  m_neptune = new Sphere(64, "../assets/Planetary Textures/Neptune.jpg",
+                         "../assets/Planetary Textures/Neptune-n.jpg");
 
   glEnable(GL_DEPTH_TEST);
   glDepthFunc(GL_LESS);
