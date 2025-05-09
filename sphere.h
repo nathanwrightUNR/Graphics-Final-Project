@@ -10,8 +10,6 @@ public:
   Sphere(int prec, const char *fname);
   Sphere(int prec);
 
-  void Render(GLint positionAttribLoc, GLint colorAttribLoc, GLint tcAttribLoc, GLint hasTex) override;
-
 private:
   void createVertices() override;
   GLuint getTextureID() override { return m_texture ? m_texture->getTextureID() : 0; }

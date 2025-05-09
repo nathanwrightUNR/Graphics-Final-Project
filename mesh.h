@@ -10,8 +10,6 @@ public:
   Mesh(glm::vec3 pivot, const char *fname);
   Mesh(glm::vec3 pivot, const char *fname, const char *tname);
 
-  void Render(GLint positionAttribLoc, GLint colorAttribLoc, GLint tcAttribLoc, GLint hasTex) override;
-
 private:
   void createVertices() override;
   bool loadModelFromFile(const char *path);

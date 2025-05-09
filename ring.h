@@ -7,7 +7,6 @@ class Ring : public Object
 public:
   Ring(int prec, const char *path);
   Ring(int prec, float inner_r, float outer_r, const char *path);
-  void Render(GLint positionAttribLoc, GLint colorAttribLoc, GLint tcAttribLoc, GLint hasTex) override;
 
 private:
   void createVertices() override;

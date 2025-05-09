@@ -33,18 +33,7 @@ public:
 
   void setupModelMatrix(glm::vec3 pivotLoc, float angle, float scale);
 
-  /**
-   * @brief
-   * binds VAO and VBOs, enable vertex atribute arrays
-   * with color and position, calls Draw and then disables
-   * color and position for next Render call.
-   *
-   * @param posAttribLoc
-   * @param colAttribLoc
-   */
-  virtual void Render(GLint posAttribLoc, GLint colAttribLoc);
-
-  virtual void Render(GLint posAttribLoc, GLint colAttribLoc, GLint tcAttribLoc, GLint hasTex);
+  void Render(GLint posAttribLoc, GLint colAttribLoc, GLint tcAttribLoc, GLint hasTex);
 
   /**
    * @brief get the model.
