@@ -11,7 +11,7 @@ using namespace std;
 #include "object.h"
 #include "mesh.h"
 #include "sphere.h"
-#include "ring.h"
+#include "skybox.h"
 
 class Graphics
 {
@@ -88,17 +88,21 @@ private:
 
   // changed to vector of object pointers.
   Object *m_sun;
-  Object *m_mercury;
-  Object *m_venus;
-  Object *m_earth;
-  Object *m_mars;
-  Object *m_jupiter;
-  Object *m_saturn;
-  Object *m_saturn_ring;
-  Object *m_uranus;
-  Object *m_neptune;
-
+  Object *m_planet;
+  Object *m_moon;
   Object *m_starship;
+
+  // Skybox
+  GLuint skyboxVAO;
+  GLuint skyboxVBO;
+  Skybox *m_skybox;
+  GLint m_skyboxProjMatrix;
+  GLint m_skyboxViewMatrix;
+  GLint m_skyboxPositionAttrib;
+  std::vector<GLfloat> skyboxVertices;
+  GLuint sbCubeMap;
+
+  GLuint skyboxCubeMap();
 };
 
 #endif /* GRAPHICS_H */
