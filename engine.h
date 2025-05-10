@@ -98,6 +98,7 @@ private:
   // running flag.
   bool m_running;
   bool first_person = false;
+  Object *target;
 };
 
 #endif // ENGINE_H

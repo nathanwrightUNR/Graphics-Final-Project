@@ -62,23 +62,38 @@ void Engine::Run()
 
     m_graphics->getCamera()->Update(dt);
 
-    glm::vec3 camera_pos = camera->GetPosition();
-    glm::vec3 front = camera->GetFront();
+    if (first_person)
+    {
+      glm::vec3 planet_pos = target->GetModel()[3];
+      float orbit_radius = 3.0f;
+      float angle = glfwGetTime();
 
-    glm::vec3 ship_pos = camera_pos - front * (first_person ? 1.f : -2.f);
+      glm::vec3 offset = glm::vec3(glm::cos(angle), 1.f, glm::sin(angle)) * orbit_radius;
+      glm::vec3 orbit_pos = planet_pos + offset;
 
-    glm::mat4 rotation = glm::lookAt(glm::vec3(0.0f), front, glm::vec3(0, 1, 0)); // face forward
-    rotation = glm::inverse(rotation);
-    rotation *= glm::rotate(glm::mat4(1.0f), glm::radians(180.0f), glm::vec3(0, 1, 0));
+      camera->position = orbit_pos;
+      camera->SetView(glm::lookAt(orbit_pos, planet_pos, glm::vec3(0, 1, 0)));
+    }
+    else
+    {
+      glm::vec3 camera_pos = camera->GetPosition();
+      glm::vec3 front = camera->GetFront();
+      glm::vec3 ship_pos = camera_pos - front * -2.0f;
 
-    glm::mat4 model = glm::translate(glm::mat4(1.0f), ship_pos) * rotation;
-    model = glm::scale(model, glm::vec3(0.01f));
+      glm::mat4 rotation = glm::lookAt(glm::vec3(0.0f), front, glm::vec3(0, 1, 0));
+      rotation = glm::inverse(rotation);
+      rotation *= glm::rotate(glm::mat4(1.0f), glm::radians(180.0f), glm::vec3(0, 1, 0));
 
-    starship->Update(model);
+      glm::mat4 model = glm::translate(glm::mat4(1.0f), ship_pos) * rotation;
+      model = glm::scale(model, glm::vec3(0.01f));
+
+      starship->Update(model);
+    }
 
     Display(m_window->getWindow(), now);
     glfwPollEvents();
   }
+
   m_running = false;
 }
 
@@ -98,6 +113,11 @@ void Engine::ProcessInput()
   {
     first_person = !first_person;
     camera->SetFirstPerson(first_person);
+
+    m_graphics->SetOrbit(first_person);
+
+    if (first_person)
+      target = m_graphics->getClosestPlanet();
   }
 
   space_pressed_last_frame = space_pressed;

@@ -35,6 +35,7 @@ public:
   float base_fov = 40.0f;
 
   void SetFirstPerson(bool enable);
+  void SetView(glm::mat4);
 
 private:
   glm::mat4 projection;

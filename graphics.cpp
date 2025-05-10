@@ -579,7 +579,7 @@ void Graphics::Render()
     m_sun->Render(m_positionAttrib, m_colorAttrib, m_tcAttrib, m_hasTexture, m_NpAttrib, m_has_nmap);
   }
 
-  if (m_starship != NULL)
+  if (m_starship != NULL && !oribing)
   {
     glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_starship->GetModel()));
     glUniform1i(m_shader->GetUniformLocation("instanced"), false);
@@ -1485,4 +1485,37 @@ void Graphics::updateAsteroidBelt(std::vector<glm::mat4> &belt, Object *asteroid
 Object *Graphics::getStarship()
 {
   return this->m_starship;
+}
+
+Object *Graphics::getClosestPlanet()
+{
+  glm::vec3 camera_pos = m_camera->GetPosition();
+  float min = FLT_MAX;
+  Object *closest_planet;
+
+  std::vector<Object *> planets = {
+      m_mercury, m_venus, m_earth, m_mars, m_jupiter,
+      m_saturn, m_uranus, m_neptune};
+
+  for (Object *planet : planets)
+  {
+    if (!planet)
+      continue;
+
+    glm::vec3 pos = glm::vec3(planet->GetModel()[3]);
+    float dist = glm::distance(camera_pos, pos);
+
+    if (dist < min)
+    {
+      min = dist;
+      closest_planet = planet;
+    }
+  }
+
+  return closest_planet;
+}
+
+void Graphics::SetOrbit(bool b)
+{
+  this->oribing = b;
 }

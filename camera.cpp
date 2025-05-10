@@ -82,3 +82,8 @@ void Camera::SetFirstPerson(bool enable)
 {
   fov = enable ? base_fov * 0.5f : base_fov;
 }
+
+void Camera::SetView(glm::mat4 v)
+{
+  this->view = v;
+}

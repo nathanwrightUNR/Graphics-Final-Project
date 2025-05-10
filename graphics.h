@@ -61,6 +61,8 @@ public:
                                   int span);
 
   void updateAsteroidBelt(std::vector<glm::mat4> &belt, Object *asteroid);
+
+  Object *getClosestPlanet();
   /**
    * @brief
    * clears screen and enables shaders, pass projection
@@ -71,6 +73,8 @@ public:
 
   Camera *getCamera();
 
+  void SetOrbit(bool);
+
 private:
   // string to record error message.
   std::string ErrorString(GLenum error);
@@ -78,6 +82,7 @@ private:
   bool collectShPrLocs();
 
   stack<glm::mat4> modelStack;
+  bool oribing = false;
 
   // pointer to Camera object.
   Camera *m_camera;
