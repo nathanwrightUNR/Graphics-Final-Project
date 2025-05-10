@@ -50,6 +50,8 @@ public:
    */
   bool Initialize(int width, int height);
 
+  Object *getStarship();
+
   void Update(double dt);
 
   void generateAsteroidTransforms(std::vector<glm::mat4> &belt,

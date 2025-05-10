@@ -10,8 +10,10 @@ public:
   ~Camera();
   bool Initialize(int w, int h);
   glm::mat4 GetProjection();
+  glm::vec3 GetPosition();
   glm::mat4 GetView();
   void Update(float dt);
+  glm::vec3 GetFront();
 
   bool forward = false;
   bool backward = false;
@@ -24,15 +26,15 @@ public:
   float pitch = 0.0f;
   float yaw = -90.0f;
 
-private:
-  glm::mat4 projection;
-  glm::mat4 view;
-
   glm::vec3 position;
   glm::vec3 up;
   glm::vec3 camera_right;
   glm::vec3 camera_front;
   glm::vec3 camera_up;
+
+private:
+  glm::mat4 projection;
+  glm::mat4 view;
 };
 
 #endif /* CAMERA_H */

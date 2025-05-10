@@ -13,6 +13,13 @@ void Object::Update(glm::mat4 model_matrix)
 	this->model = model_matrix;
 }
 
+void Object::Move(glm::vec3 direction, float speed, float dt)
+{
+	m_position += direction * speed * dt;
+	model = glm::translate(glm::mat4(1.0f), m_position);
+	model = glm::scale(model, glm::vec3(0.01f));
+}
+
 glm::mat4 Object::GetModel()
 {
 	// return model matrix
@@ -118,4 +125,9 @@ void Object::UpdateInstanceBuffer(std::vector<glm::mat4> &transforms)
 	glBindBuffer(GL_ARRAY_BUFFER, iVB);
 	glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(glm::mat4) * transforms.size(), transforms.data());
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+
+glm::vec3 Object::getPosition()
+{
+	return this->m_position;
 }

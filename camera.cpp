@@ -67,3 +67,13 @@ void Camera::Update(float dt)
 
   projection = glm::perspective(glm::radians(this->fov), 800.0f / 600.0f, 0.01f, 100.0f);
 }
+
+glm::vec3 Camera::GetPosition()
+{
+  return this->position;
+}
+
+glm::vec3 Camera::GetFront()
+{
+  return this->camera_front;
+}

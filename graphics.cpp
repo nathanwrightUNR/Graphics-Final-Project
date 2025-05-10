@@ -277,20 +277,6 @@ void Graphics::Update(double dt)
   if (m_sun != NULL)
     m_sun->Update(localTransform);
 
-  // position of starship
-  r = 1.;
-  theta = glm::radians(90.);
-  x = r * glm::cos(theta);
-  z = r * glm::sin(theta);
-  localTransform = glm::mat4(1.);
-  localTransform *= glm::translate(glm::mat4(1.0f), glm::vec3(x, 0.0f, z));
-  // this->modelStack.pop();
-
-  localTransform *= glm::scale(glm::mat4(1.f), glm::vec3(0.01));
-
-  if (m_starship != NULL)
-    m_starship->Update(localTransform);
-
   // animate mercury
   speed = {1., 0., 1.};
   dist = {3., 0., 3.};
@@ -1494,4 +1480,9 @@ void Graphics::updateAsteroidBelt(std::vector<glm::mat4> &belt, Object *asteroid
   }
 
   asteroid->UpdateInstanceBuffer(belt);
+}
+
+Object *Graphics::getStarship()
+{
+  return this->m_starship;
 }

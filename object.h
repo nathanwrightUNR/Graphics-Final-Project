@@ -41,6 +41,10 @@ public:
 
   void UpdateInstanceBuffer(std::vector<glm::mat4> &transforms);
 
+  void Move(glm::vec3 direction, float speed, float dt);
+
+  glm::vec3 getPosition();
+
   /**
    * @brief get the model.
    *
@@ -89,6 +93,8 @@ protected:
 
   // angle for rotation.
   float angle;
+
+  glm::vec3 m_position = glm::vec3(0.f);
 
   GLuint iVB = 0;
   int num_instances = 0;
