@@ -50,8 +50,19 @@ public:
    */
   bool Initialize(int width, int height);
 
+  Object *getStarship();
+
   void Update(double dt);
 
+  void generateAsteroidTransforms(std::vector<glm::mat4> &belt,
+                                  std::vector<float> &angles,
+                                  int count,
+                                  float r,
+                                  int span);
+
+  void updateAsteroidBelt(std::vector<glm::mat4> &belt, Object *asteroid);
+
+  Object *getClosestPlanet();
   /**
    * @brief
    * clears screen and enables shaders, pass projection
@@ -62,6 +73,8 @@ public:
 
   Camera *getCamera();
 
+  void SetOrbit(bool);
+
 private:
   // string to record error message.
   std::string ErrorString(GLenum error);
@@ -69,6 +82,7 @@ private:
   bool collectShPrLocs();
 
   stack<glm::mat4> modelStack;
+  bool oribing = false;
 
   // pointer to Camera object.
   Camera *m_camera;
@@ -94,6 +108,7 @@ private:
   Object *m_mercury;
   Object *m_venus;
   Object *m_earth;
+  Object *m_moon;
   Object *m_mars;
   Object *m_jupiter;
   Object *m_saturn;
@@ -102,6 +117,41 @@ private:
   Object *m_neptune;
 
   Object *m_starship;
+
+  Object *m_mercury_trace;
+  Object *m_venus_trace;
+  Object *m_earth_trace;
+  Object *m_mars_trace;
+  Object *m_jupiter_trace;
+  Object *m_saturn_trace;
+  Object *m_uranus_trace;
+  Object *m_neptune_trace;
+
+  std::vector<glm::mat4> m_inner_asteroid_belt1;
+  std::vector<glm::mat4> m_inner_asteroid_belt2;
+  std::vector<glm::mat4> m_inner_asteroid_belt3;
+
+  std::vector<float> m_inner_asteroid_angles1;
+  std::vector<float> m_inner_asteroid_angles2;
+  std::vector<float> m_inner_asteroid_angles3;
+
+  Object *m_inner_asteroid1;
+  Object *m_inner_asteroid2;
+  Object *m_inner_asteroid3;
+
+  std::vector<glm::mat4> m_outer_asteroid_belt1;
+  std::vector<glm::mat4> m_outer_asteroid_belt2;
+  std::vector<glm::mat4> m_outer_asteroid_belt3;
+
+  std::vector<float> m_outer_asteroid_angles1;
+  std::vector<float> m_outer_asteroid_angles2;
+  std::vector<float> m_outer_asteroid_angles3;
+
+  Object *m_outer_asteroid1;
+  Object *m_outer_asteroid2;
+  Object *m_outer_asteroid3;
+
+  Object *m_halleys;
 
   // Skybox
   GLuint skyboxVAO;

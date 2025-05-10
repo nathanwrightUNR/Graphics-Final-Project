@@ -6,10 +6,10 @@ Camera::~Camera() {}
 
 bool Camera::Initialize(int w, int h)
 {
-  this->position = glm::vec3(0.0f, 0.0f, 18.0f);
+  this->position = glm::vec3(0.0f, 9.0f, 55.0f);
   this->up = glm::vec3(0.0f, 1.0f, 0.0f);
   this->yaw = -90.0f;
-  this->pitch = 0.0f;
+  this->pitch = -15.0f;
 
   this->view = glm::lookAt(position, camera_front + position, up);
 
@@ -66,4 +66,24 @@ void Camera::Update(float dt)
   view = glm::lookAt(this->position, this->position + this->camera_front, this->camera_up);
 
   projection = glm::perspective(glm::radians(this->fov), 800.0f / 600.0f, 0.01f, 100.0f);
+}
+
+glm::vec3 Camera::GetPosition()
+{
+  return this->position;
+}
+
+glm::vec3 Camera::GetFront()
+{
+  return this->camera_front;
+}
+
+void Camera::SetFirstPerson(bool enable)
+{
+  fov = enable ? base_fov * 0.5f : base_fov;
+}
+
+void Camera::SetView(glm::mat4 v)
+{
+  this->view = v;
 }

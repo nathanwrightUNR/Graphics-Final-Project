@@ -13,6 +13,13 @@ void Object::Update(glm::mat4 model_matrix)
 	this->model = model_matrix;
 }
 
+void Object::Move(glm::vec3 direction, float speed, float dt)
+{
+	m_position += direction * speed * dt;
+	model = glm::translate(glm::mat4(1.0f), m_position);
+	model = glm::scale(model, glm::vec3(0.01f));
+}
+
 glm::mat4 Object::GetModel()
 {
 	// return model matrix
@@ -53,7 +60,10 @@ void Object::Render(GLint posAttribLoc, GLint colAttribLoc,
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IB);
 
 	// Render
-	glDrawElements(GL_TRIANGLES, Indices.size(), GL_UNSIGNED_INT, 0);
+	if (instanced)
+		glDrawElementsInstanced(GL_TRIANGLES, Indices.size(), GL_UNSIGNED_INT, 0, num_instances);
+	else
+		glDrawElements(GL_TRIANGLES, Indices.size(), GL_UNSIGNED_INT, 0);
 
 	// Disable vertex arrays
 	glDisableVertexAttribArray(posAttribLoc);
@@ -86,4 +96,38 @@ void Object::setupModelMatrix(glm::vec3 pivot, float angle, float scale)
 	model = glm::translate(glm::mat4(1.0f), pivotLocation);
 	model *= glm::rotate(glm::mat4(1.f), angle, glm::vec3(0., 1., 0));
 	model *= glm::scale(glm::vec3(scale, scale, scale));
+}
+
+void Object::Instance(std::vector<glm::mat4> &transforms)
+{
+	num_instances = transforms.size();
+	instanced = true;
+
+	glGenBuffers(1, &iVB);
+	glBindBuffer(GL_ARRAY_BUFFER, iVB);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(glm::mat4) * num_instances, transforms.data(), GL_STATIC_DRAW);
+
+	glBindVertexArray(this->vao);
+
+	// looks weird but apparently need a pointer for each vector of the mat4
+	for (int i = 0; i < 4; i++)
+	{
+		glEnableVertexAttribArray(4 + i);
+		glVertexAttribPointer(4 + i, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void *)(sizeof(float) * i * 4));
+		glVertexAttribDivisor(4 + i, 1);
+	}
+
+	glBindVertexArray(0);
+}
+
+void Object::UpdateInstanceBuffer(std::vector<glm::mat4> &transforms)
+{
+	glBindBuffer(GL_ARRAY_BUFFER, iVB);
+	glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(glm::mat4) * transforms.size(), transforms.data());
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+
+glm::vec3 Object::getPosition()
+{
+	return this->m_position;
 }

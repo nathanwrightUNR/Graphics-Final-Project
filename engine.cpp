@@ -52,25 +52,75 @@ void Engine::Run()
     double now = glfwGetTime();
     double dt = getDT();
 
+    float speed = 1.0f;
+    Object *starship = m_graphics->getStarship();
+    Camera *camera = m_graphics->getCamera();
+
     ProcessInput();
+    if (camera->forward)
+      starship->Move(camera->GetFront(), speed, dt);
+
     m_graphics->getCamera()->Update(dt);
+
+    if (first_person)
+    {
+      glm::vec3 planet_pos = target->GetModel()[3];
+      float orbit_radius = 3.0f;
+      float angle = glfwGetTime();
+
+      glm::vec3 offset = glm::vec3(glm::cos(angle), 1.f, glm::sin(angle)) * orbit_radius;
+      glm::vec3 orbit_pos = planet_pos + offset;
+
+      camera->position = orbit_pos;
+      camera->SetView(glm::lookAt(orbit_pos, planet_pos, glm::vec3(0, 1, 0)));
+    }
+    else
+    {
+      glm::vec3 camera_pos = camera->GetPosition();
+      glm::vec3 front = camera->GetFront();
+      glm::vec3 ship_pos = camera_pos - front * -2.0f;
+
+      glm::mat4 rotation = glm::lookAt(glm::vec3(0.0f), front, glm::vec3(0, 1, 0));
+      rotation = glm::inverse(rotation);
+      rotation *= glm::rotate(glm::mat4(1.0f), glm::radians(180.0f), glm::vec3(0, 1, 0));
+
+      glm::mat4 model = glm::translate(glm::mat4(1.0f), ship_pos) * rotation;
+      model = glm::scale(model, glm::vec3(0.01f));
+
+      starship->Update(model);
+    }
+
     Display(m_window->getWindow(), now);
     glfwPollEvents();
   }
+
   m_running = false;
 }
 
 void Engine::ProcessInput()
 {
+  static bool space_pressed_last_frame = false;
+
   if (glfwGetKey(m_window->getWindow(), GLFW_KEY_ESCAPE) == GLFW_PRESS)
     glfwSetWindowShouldClose(m_window->getWindow(), true);
 
   Camera *camera = this->m_graphics->getCamera();
-
   camera->forward = glfwGetKey(m_window->getWindow(), GLFW_KEY_W) == GLFW_PRESS;
-  camera->backward = glfwGetKey(m_window->getWindow(), GLFW_KEY_S) == GLFW_PRESS;
-  camera->left = glfwGetKey(m_window->getWindow(), GLFW_KEY_A) == GLFW_PRESS;
-  camera->right = glfwGetKey(m_window->getWindow(), GLFW_KEY_D) == GLFW_PRESS;
+
+  bool space_pressed = glfwGetKey(m_window->getWindow(), GLFW_KEY_SPACE) == GLFW_PRESS;
+
+  if (space_pressed && !space_pressed_last_frame)
+  {
+    first_person = !first_person;
+    camera->SetFirstPerson(first_person);
+
+    m_graphics->SetOrbit(first_person);
+
+    if (first_person)
+      target = m_graphics->getClosestPlanet();
+  }
+
+  space_pressed_last_frame = space_pressed;
 }
 
 float Engine::getDT()
