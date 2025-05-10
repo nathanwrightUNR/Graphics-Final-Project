@@ -1395,12 +1395,12 @@ GLuint Graphics::skyboxCubeMap()
     int x, y;
   };
   FaceOffset faceOffsets[6] = {
-      {2, 1}, // +X (right)
       {0, 1}, // -X (left)
-      {1, 0}, // +Y (top)
+      {2, 1}, // +X (right)
       {1, 2}, // -Y (bottom)
+      {1, 0}, // +Y (top)
+      {3, 1}, // -Z (back)
       {1, 1}, // +Z (front)
-      {3, 1}  // -Z (back)
   };
 
   // Extract and upload each face
