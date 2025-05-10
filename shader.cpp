@@ -40,60 +40,85 @@ bool Shader::AddShader(GLenum ShaderType)
   if (ShaderType == GL_VERTEX_SHADER)
   {
     s = "#version 410\n \
-      \
-      layout (location = 0) in vec3 v_position; \
-      layout (location = 1) in vec2 v_tc;  \
-      layout (location = 2) in vec3 v_normal; \
-      layout (location = 4) in mat4 imodelMatrix; \
-      \
-      out vec3 varNorm; \
-      out vec2 tc; \
-      \
-      uniform mat4 projectionMatrix; \
-      uniform mat4 viewMatrix; \
-      uniform mat4 modelMatrix; \
-      uniform mat3 normMatrix; \
-      uniform bool instanced; \
-      \
-      void main(void) \
-      { \
-        vec4 v = vec4(v_position, 1.0); \
-        mat4 model = instanced ? imodelMatrix : modelMatrix; \
-        gl_Position = projectionMatrix * viewMatrix * model * v; \
-        varNorm = normMatrix * v_normal; \
-        tc = v_tc; \
-      } \
-      ";
+          \
+          layout (location = 0) in vec3 v_position; \
+          layout (location = 1) in vec2 v_tc; \
+          layout (location = 2) in vec3 v_normal; \
+          layout (location = 4) in mat4 imodelMatrix; \
+          \
+          out vec2 tc; \
+          out vec3 varNorm; \
+          out vec3 frag_pos; \
+          \
+          uniform mat4 projectionMatrix; \
+          uniform mat4 viewMatrix; \
+          uniform mat4 modelMatrix; \
+          uniform mat3 normMatrix; \
+          uniform bool instanced; \
+          \
+          void main(void) \
+          { \
+            vec4 v = vec4(v_position, 1.0); \
+            mat4 model = instanced ? imodelMatrix : modelMatrix; \
+            gl_Position = projectionMatrix * viewMatrix * model * v; \
+            tc = v_tc; \
+            varNorm = normMatrix * v_normal; \
+            frag_pos = vec3(model * v); \
+          }";
   }
 
   else if (ShaderType == GL_FRAGMENT_SHADER)
   {
     s = "#version 410\n \
-      \
-      uniform sampler2D sp; \
-      uniform sampler2D samp1; \
-      uniform bool hasTexture; \
-      uniform bool hasNormalMap; \
-      \
-      in vec2 tc; \
-      in vec3 varNorm; \
-      \
-      out vec4 frag_color; \
-      \
-      void main(void) \
-      { \
-        vec3 N; \
-        if (hasNormalMap) \
-          N = normalize(varNorm + texture(samp1, tc).xyz * 2.0 - 1.0); \
-        else \
-          N = normalize(varNorm); \
-      \
-        if (hasTexture) \
-          frag_color = texture(sp, tc); \
-        else \
-          frag_color = vec4(0.5, 0.5, 0.5, 1.0); \
-      } \
-      ";
+          \
+          struct material { \
+            vec3 ambient; \
+            vec3 diffuse; \
+            vec3 specular; \
+            float shininess; \
+          }; \
+          \
+          in vec2 tc; \
+          in vec3 varNorm; \
+          in vec3 frag_pos; \
+          \
+          uniform bool is_emissive; \
+          uniform bool hasNormalMap; \
+          uniform bool hasTexture; \
+          uniform sampler2D sp; \
+          uniform sampler2D samp1; \
+          uniform vec3 light_pos; \
+          uniform vec3 light_color; \
+          uniform vec3 view_pos; \
+          uniform material mat; \
+          \
+          out vec4 frag_color; \
+          \
+          void main(void) \
+          { \
+            vec4 base_color = hasTexture ? texture(sp, tc) : vec4(1.0); \
+            \
+            if (is_emissive) { \
+              frag_color = base_color; \
+            } else { \
+              vec3 norm = normalize(varNorm); \
+              if (hasNormalMap) { \
+                norm = normalize(norm + texture(samp1, tc).xyz * 2.0 - 1.0); \
+              } \
+              vec3 light_dir = normalize(light_pos - frag_pos); \
+              float diff = max(dot(norm, light_dir), 0.0); \
+              vec3 diffuse = diff * mat.diffuse * light_color; \
+              \
+              vec3 view_dir = normalize(view_pos - frag_pos); \
+              vec3 reflect_dir = reflect(-light_dir, norm); \
+              float spec = pow(max(dot(view_dir, reflect_dir), 0.0), mat.shininess); \
+              vec3 specular = mat.specular * spec * light_color; \
+              \
+              vec3 ambient = mat.ambient * light_color; \
+              vec3 result = (ambient + diffuse + specular) * vec3(base_color); \
+              frag_color = vec4(result, 1.0); \
+            } \
+          }";
   }
 
   GLuint ShaderObj = glCreateShader(ShaderType);

@@ -75,6 +75,11 @@ public:
 
   void SetOrbit(bool);
 
+  void SetMaterialUniforms(const glm::vec3 &ambient,
+                           const glm::vec3 &diffuse,
+                           const glm::vec3 &specular,
+                           float shininess);
+
 private:
   // string to record error message.
   std::string ErrorString(GLenum error);
@@ -95,6 +100,7 @@ private:
   GLint m_viewMatrix;
   // GLint to store model matrix.
   GLint m_modelMatrix;
+  GLint m_normalMatrix;
 
   GLint m_positionAttrib;
   GLint m_colorAttrib;

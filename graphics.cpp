@@ -549,14 +549,32 @@ void Graphics::Render()
   // Start the correct program
   m_shader->Enable();
 
+  glm::mat4 view = m_camera->GetView();
+  glm::vec3 viewPos = glm::vec3(glm::inverse(view)[3]);
+
+  glm::vec4 light = m_sun->GetModel() * glm::vec4(0, 0, 0, 1);
+  glm::vec3 lightPos = glm::vec3(light);
+
+  glUniform3f(m_shader->GetUniformLocation("view_pos"), viewPos.x, viewPos.y, viewPos.z);
+  glUniform3f(m_shader->GetUniformLocation("light_pos"), lightPos.x, lightPos.y, lightPos.z);
+  glUniform3f(m_shader->GetUniformLocation("light_color"), 1.0f, 1.0f, 1.0f);
+  glUniform1i(m_shader->GetUniformLocation("is_emissive"), false);
+
   // Send in the projection and view to the shader (stay the same while camera intrinsic(perspective) and extrinsic (view) parameters are the same
   glUniformMatrix4fv(m_projectionMatrix, 1, GL_FALSE, glm::value_ptr(m_camera->GetProjection()));
-  glUniformMatrix4fv(m_viewMatrix, 1, GL_FALSE, glm::value_ptr(m_camera->GetView()));
+  glUniformMatrix4fv(m_viewMatrix, 1, GL_FALSE, glm::value_ptr(view));
 
   if (m_sun != NULL)
   {
+    SetMaterialUniforms(glm::vec3(1.0f, 0.9f, 0.2f), // ambient
+                        glm::vec3(1.0f, 0.8f, 0.1f), // diffuse
+                        glm::vec3(1.0f, 1.0f, 0.5f), // specular
+                        64.0f);                      // shininess
+
     glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_sun->GetModel()));
     glUniform1i(m_shader->GetUniformLocation("instanced"), false);
+    glm::mat3 matrix = glm::transpose(glm::inverse(glm::mat3(m_sun->GetModel())));
+    glUniformMatrix3fv(m_normalMatrix, 1, GL_FALSE, glm::value_ptr(matrix));
 
     if (m_sun->hasTex)
     {
@@ -596,8 +614,15 @@ void Graphics::Render()
 
   if (m_starship != NULL && !oribing)
   {
+    SetMaterialUniforms(glm::vec3(0.05f, 0.05f, 0.05f),
+                        glm::vec3(0.6f, 0.6f, 0.6f),
+                        glm::vec3(1.0f, 1.0f, 1.0f),
+                        128.0f);
+
     glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_starship->GetModel()));
     glUniform1i(m_shader->GetUniformLocation("instanced"), false);
+    glm::mat3 matrix = glm::transpose(glm::inverse(glm::mat3(m_starship->GetModel())));
+    glUniformMatrix3fv(m_normalMatrix, 1, GL_FALSE, glm::value_ptr(matrix));
 
     if (m_starship->hasTex)
     {
@@ -637,8 +662,15 @@ void Graphics::Render()
 
   if (m_mercury != NULL)
   {
+    SetMaterialUniforms(glm::vec3(0.2f),
+                        glm::vec3(1.0f),
+                        glm::vec3(0.4f),
+                        32.0f);
+
     glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_mercury->GetModel()));
     glUniform1i(m_shader->GetUniformLocation("instanced"), false);
+    glm::mat3 matrix = glm::transpose(glm::inverse(glm::mat3(m_mercury->GetModel())));
+    glUniformMatrix3fv(m_normalMatrix, 1, GL_FALSE, glm::value_ptr(matrix));
 
     if (m_mercury->hasTex)
     {
@@ -678,8 +710,15 @@ void Graphics::Render()
 
   if (m_mercury_trace != NULL)
   {
+    SetMaterialUniforms(glm::vec3(0.2f),
+                        glm::vec3(1.0f),
+                        glm::vec3(0.4f),
+                        32.0f);
+
     glUniform1i(m_shader->GetUniformLocation("instanced"), false);
     glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_mercury_trace->GetModel()));
+    glm::mat3 matrix = glm::transpose(glm::inverse(glm::mat3(m_mercury_trace->GetModel())));
+    glUniformMatrix3fv(m_normalMatrix, 1, GL_FALSE, glm::value_ptr(matrix));
     glUniform1i(m_hasTexture, false);
     glUniform1i(m_has_nmap, false);
 
@@ -688,8 +727,15 @@ void Graphics::Render()
 
   if (m_venus != NULL)
   {
+    SetMaterialUniforms(glm::vec3(0.2f),
+                        glm::vec3(1.0f),
+                        glm::vec3(0.4f),
+                        32.0f);
+
     glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_venus->GetModel()));
     glUniform1i(m_shader->GetUniformLocation("instanced"), false);
+    glm::mat3 matrix = glm::transpose(glm::inverse(glm::mat3(m_venus->GetModel())));
+    glUniformMatrix3fv(m_normalMatrix, 1, GL_FALSE, glm::value_ptr(matrix));
 
     if (m_venus->hasTex)
     {
@@ -712,7 +758,7 @@ void Graphics::Render()
       glUniform1i(m_has_nmap, true);
       glActiveTexture(GL_TEXTURE1);
       glBindTexture(GL_TEXTURE_2D, m_venus->getNormalMapID());
-      GLuint sampler = m_shader->GetUniformLocation("samp");
+      GLuint sampler = m_shader->GetUniformLocation("samp1");
       if (sampler == INVALID_UNIFORM_LOCATION)
       {
         printf("Sampler Not found not found\n");
@@ -729,8 +775,15 @@ void Graphics::Render()
 
   if (m_venus_trace != NULL)
   {
+    SetMaterialUniforms(glm::vec3(0.2f),
+                        glm::vec3(1.0f),
+                        glm::vec3(0.4f),
+                        32.0f);
+
     glUniform1i(m_shader->GetUniformLocation("instanced"), false);
     glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_venus_trace->GetModel()));
+    glm::mat3 matrix = glm::transpose(glm::inverse(glm::mat3(m_venus_trace->GetModel())));
+    glUniformMatrix3fv(m_normalMatrix, 1, GL_FALSE, glm::value_ptr(matrix));
     glUniform1i(m_hasTexture, false);
     glUniform1i(m_has_nmap, false);
 
@@ -739,8 +792,14 @@ void Graphics::Render()
 
   if (m_earth != NULL)
   {
+    SetMaterialUniforms(glm::vec3(0.2f),
+                        glm::vec3(1.0f),
+                        glm::vec3(0.4f),
+                        32.0f);
     glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_earth->GetModel()));
     glUniform1i(m_shader->GetUniformLocation("instanced"), false);
+    glm::mat3 matrix = glm::transpose(glm::inverse(glm::mat3(m_earth->GetModel())));
+    glUniformMatrix3fv(m_normalMatrix, 1, GL_FALSE, glm::value_ptr(matrix));
 
     if (m_earth->hasTex)
     {
@@ -780,8 +839,15 @@ void Graphics::Render()
 
   if (m_moon != NULL)
   {
+    SetMaterialUniforms(glm::vec3(0.2f),
+                        glm::vec3(1.0f),
+                        glm::vec3(0.4f),
+                        32.0f);
+
     glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_moon->GetModel()));
     glUniform1i(m_shader->GetUniformLocation("instanced"), false);
+    glm::mat3 matrix = glm::transpose(glm::inverse(glm::mat3(m_moon->GetModel())));
+    glUniformMatrix3fv(m_normalMatrix, 1, GL_FALSE, glm::value_ptr(matrix));
 
     if (m_moon->hasTex)
     {
@@ -821,8 +887,15 @@ void Graphics::Render()
 
   if (m_earth_trace != NULL)
   {
+    SetMaterialUniforms(glm::vec3(0.2f),
+                        glm::vec3(1.0f),
+                        glm::vec3(0.4f),
+                        32.0f);
+
     glUniform1i(m_shader->GetUniformLocation("instanced"), false);
     glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_earth_trace->GetModel()));
+    glm::mat3 matrix = glm::transpose(glm::inverse(glm::mat3(m_earth_trace->GetModel())));
+    glUniformMatrix3fv(m_normalMatrix, 1, GL_FALSE, glm::value_ptr(matrix));
     glUniform1i(m_hasTexture, false);
     glUniform1i(m_has_nmap, false);
 
@@ -831,8 +904,15 @@ void Graphics::Render()
 
   if (m_mars != NULL)
   {
+    SetMaterialUniforms(glm::vec3(0.2f),
+                        glm::vec3(1.0f),
+                        glm::vec3(0.4f),
+                        32.0f);
+
     glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_mars->GetModel()));
     glUniform1i(m_shader->GetUniformLocation("instanced"), false);
+    glm::mat3 matrix = glm::transpose(glm::inverse(glm::mat3(m_mars->GetModel())));
+    glUniformMatrix3fv(m_normalMatrix, 1, GL_FALSE, glm::value_ptr(matrix));
 
     if (m_mars->hasTex)
     {
@@ -872,8 +952,15 @@ void Graphics::Render()
 
   if (m_mars_trace != NULL)
   {
+    SetMaterialUniforms(glm::vec3(0.2f),
+                        glm::vec3(1.0f),
+                        glm::vec3(0.4f),
+                        32.0f);
+
     glUniform1i(m_shader->GetUniformLocation("instanced"), false);
     glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_mars_trace->GetModel()));
+    glm::mat3 matrix = glm::transpose(glm::inverse(glm::mat3(m_mars_trace->GetModel())));
+    glUniformMatrix3fv(m_normalMatrix, 1, GL_FALSE, glm::value_ptr(matrix));
     glUniform1i(m_hasTexture, false);
     glUniform1i(m_has_nmap, false);
 
@@ -882,8 +969,15 @@ void Graphics::Render()
 
   if (m_jupiter != NULL)
   {
+    SetMaterialUniforms(glm::vec3(0.2f),
+                        glm::vec3(1.0f),
+                        glm::vec3(0.4f),
+                        32.0f);
+
     glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_jupiter->GetModel()));
     glUniform1i(m_shader->GetUniformLocation("instanced"), false);
+    glm::mat3 matrix = glm::transpose(glm::inverse(glm::mat3(m_jupiter->GetModel())));
+    glUniformMatrix3fv(m_normalMatrix, 1, GL_FALSE, glm::value_ptr(matrix));
 
     if (m_jupiter->hasTex)
     {
@@ -923,8 +1017,15 @@ void Graphics::Render()
 
   if (m_jupiter_trace != NULL)
   {
+    SetMaterialUniforms(glm::vec3(0.2f),
+                        glm::vec3(1.0f),
+                        glm::vec3(0.4f),
+                        32.0f);
+
     glUniform1i(m_shader->GetUniformLocation("instanced"), false);
     glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_jupiter_trace->GetModel()));
+    glm::mat3 matrix = glm::transpose(glm::inverse(glm::mat3(m_jupiter_trace->GetModel())));
+    glUniformMatrix3fv(m_normalMatrix, 1, GL_FALSE, glm::value_ptr(matrix));
     glUniform1i(m_hasTexture, false);
     glUniform1i(m_has_nmap, false);
 
@@ -933,8 +1034,15 @@ void Graphics::Render()
 
   if (m_saturn != NULL)
   {
+    SetMaterialUniforms(glm::vec3(0.2f),
+                        glm::vec3(1.0f),
+                        glm::vec3(0.4f),
+                        32.0f);
+
     glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_saturn->GetModel()));
     glUniform1i(m_shader->GetUniformLocation("instanced"), false);
+    glm::mat3 matrix = glm::transpose(glm::inverse(glm::mat3(m_saturn->GetModel())));
+    glUniformMatrix3fv(m_normalMatrix, 1, GL_FALSE, glm::value_ptr(matrix));
 
     if (m_saturn->hasTex)
     {
@@ -974,8 +1082,15 @@ void Graphics::Render()
 
   if (m_saturn_trace != NULL)
   {
+    SetMaterialUniforms(glm::vec3(0.2f),
+                        glm::vec3(1.0f),
+                        glm::vec3(0.4f),
+                        32.0f);
+
     glUniform1i(m_shader->GetUniformLocation("instanced"), false);
     glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_saturn_trace->GetModel()));
+    glm::mat3 matrix = glm::transpose(glm::inverse(glm::mat3(m_saturn_trace->GetModel())));
+    glUniformMatrix3fv(m_normalMatrix, 1, GL_FALSE, glm::value_ptr(matrix));
     glUniform1i(m_hasTexture, false);
     glUniform1i(m_has_nmap, false);
 
@@ -984,8 +1099,15 @@ void Graphics::Render()
 
   if (m_saturn_ring != NULL)
   {
+    SetMaterialUniforms(glm::vec3(0.6f),
+                        glm::vec3(0.8f),
+                        glm::vec3(0.2f),
+                        8.0f);
+
     glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_saturn_ring->GetModel()));
     glUniform1i(m_shader->GetUniformLocation("instanced"), false);
+    glm::mat3 matrix = glm::transpose(glm::inverse(glm::mat3(m_saturn_ring->GetModel())));
+    glUniformMatrix3fv(m_normalMatrix, 1, GL_FALSE, glm::value_ptr(matrix));
 
     if (m_saturn_ring->hasTex)
     {
@@ -1025,8 +1147,15 @@ void Graphics::Render()
 
   if (m_uranus != NULL)
   {
+    SetMaterialUniforms(glm::vec3(0.2f),
+                        glm::vec3(1.0f),
+                        glm::vec3(0.4f),
+                        32.0f);
+
     glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_uranus->GetModel()));
     glUniform1i(m_shader->GetUniformLocation("instanced"), false);
+    glm::mat3 matrix = glm::transpose(glm::inverse(glm::mat3(m_uranus->GetModel())));
+    glUniformMatrix3fv(m_normalMatrix, 1, GL_FALSE, glm::value_ptr(matrix));
 
     if (m_uranus->hasTex)
     {
@@ -1066,8 +1195,15 @@ void Graphics::Render()
 
   if (m_uranus_trace != NULL)
   {
+    SetMaterialUniforms(glm::vec3(0.2f),
+                        glm::vec3(1.0f),
+                        glm::vec3(0.4f),
+                        32.0f);
+
     glUniform1i(m_shader->GetUniformLocation("instanced"), false);
     glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_uranus_trace->GetModel()));
+    glm::mat3 matrix = glm::transpose(glm::inverse(glm::mat3(m_uranus_trace->GetModel())));
+    glUniformMatrix3fv(m_normalMatrix, 1, GL_FALSE, glm::value_ptr(matrix));
     glUniform1i(m_hasTexture, false);
     glUniform1i(m_has_nmap, false);
 
@@ -1076,8 +1212,15 @@ void Graphics::Render()
 
   if (m_neptune != NULL)
   {
+    SetMaterialUniforms(glm::vec3(0.2f),
+                        glm::vec3(1.0f),
+                        glm::vec3(0.4f),
+                        32.0f);
+
     glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_neptune->GetModel()));
     glUniform1i(m_shader->GetUniformLocation("instanced"), false);
+    glm::mat3 matrix = glm::transpose(glm::inverse(glm::mat3(m_neptune->GetModel())));
+    glUniformMatrix3fv(m_normalMatrix, 1, GL_FALSE, glm::value_ptr(matrix));
 
     if (m_neptune->hasTex)
     {
@@ -1117,8 +1260,15 @@ void Graphics::Render()
 
   if (m_neptune_trace != NULL)
   {
+    SetMaterialUniforms(glm::vec3(0.0f),
+                        glm::vec3(1.0f),
+                        glm::vec3(0.0f),
+                        1.0f);
+
     glUniform1i(m_shader->GetUniformLocation("instanced"), false);
     glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_neptune_trace->GetModel()));
+    glm::mat3 matrix = glm::transpose(glm::inverse(glm::mat3(m_neptune_trace->GetModel())));
+    glUniformMatrix3fv(m_normalMatrix, 1, GL_FALSE, glm::value_ptr(matrix));
     glUniform1i(m_hasTexture, false);
     glUniform1i(m_has_nmap, false);
 
@@ -1127,8 +1277,16 @@ void Graphics::Render()
 
   if (m_inner_asteroid1 != NULL)
   {
+    SetMaterialUniforms(glm::vec3(0.0f),
+                        glm::vec3(1.0f),
+                        glm::vec3(0.0f),
+                        1.0f);
+
     glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_inner_asteroid1->GetModel()));
     glUniform1i(m_shader->GetUniformLocation("instanced"), true);
+    glm::mat3 matrix = glm::transpose(glm::inverse(glm::mat3(m_inner_asteroid1->GetModel())));
+    glUniformMatrix3fv(m_normalMatrix, 1, GL_FALSE, glm::value_ptr(matrix));
+
     glUniform1i(m_hasTexture, true);
     glUniform1i(m_has_nmap, false);
     glActiveTexture(GL_TEXTURE0);
@@ -1144,8 +1302,15 @@ void Graphics::Render()
 
   if (m_inner_asteroid2 != NULL)
   {
+    SetMaterialUniforms(glm::vec3(0.0f),
+                        glm::vec3(1.0f),
+                        glm::vec3(0.0f),
+                        1.0f);
+
     glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_inner_asteroid2->GetModel()));
     glUniform1i(m_shader->GetUniformLocation("instanced"), true);
+    glm::mat3 matrix = glm::transpose(glm::inverse(glm::mat3(m_inner_asteroid2->GetModel())));
+    glUniformMatrix3fv(m_normalMatrix, 1, GL_FALSE, glm::value_ptr(matrix));
     glUniform1i(m_hasTexture, true);
     glUniform1i(m_has_nmap, false);
     glActiveTexture(GL_TEXTURE0);
@@ -1161,8 +1326,15 @@ void Graphics::Render()
 
   if (m_inner_asteroid3 != NULL)
   {
+    SetMaterialUniforms(glm::vec3(0.0f),
+                        glm::vec3(1.0f),
+                        glm::vec3(0.0f),
+                        1.0f);
+
     glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_inner_asteroid3->GetModel()));
     glUniform1i(m_shader->GetUniformLocation("instanced"), true);
+    glm::mat3 matrix = glm::transpose(glm::inverse(glm::mat3(m_inner_asteroid3->GetModel())));
+    glUniformMatrix3fv(m_normalMatrix, 1, GL_FALSE, glm::value_ptr(matrix));
     glUniform1i(m_hasTexture, true);
     glUniform1i(m_has_nmap, false);
     glActiveTexture(GL_TEXTURE0);
@@ -1178,8 +1350,15 @@ void Graphics::Render()
 
   if (m_outer_asteroid1 != NULL)
   {
+    SetMaterialUniforms(glm::vec3(0.0f),
+                        glm::vec3(1.0f),
+                        glm::vec3(0.0f),
+                        1.0f);
+
     glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_outer_asteroid1->GetModel()));
     glUniform1i(m_shader->GetUniformLocation("instanced"), true);
+    glm::mat3 matrix = glm::transpose(glm::inverse(glm::mat3(m_outer_asteroid1->GetModel())));
+    glUniformMatrix3fv(m_normalMatrix, 1, GL_FALSE, glm::value_ptr(matrix));
     glUniform1i(m_hasTexture, true);
     glUniform1i(m_has_nmap, false);
     glActiveTexture(GL_TEXTURE0);
@@ -1195,8 +1374,15 @@ void Graphics::Render()
 
   if (m_outer_asteroid2 != NULL)
   {
+    SetMaterialUniforms(glm::vec3(0.0f),
+                        glm::vec3(1.0f),
+                        glm::vec3(0.0f),
+                        1.0f);
+
     glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_outer_asteroid2->GetModel()));
     glUniform1i(m_shader->GetUniformLocation("instanced"), true);
+    glm::mat3 matrix = glm::transpose(glm::inverse(glm::mat3(m_outer_asteroid2->GetModel())));
+    glUniformMatrix3fv(m_normalMatrix, 1, GL_FALSE, glm::value_ptr(matrix));
     glUniform1i(m_hasTexture, true);
     glUniform1i(m_has_nmap, false);
     glActiveTexture(GL_TEXTURE0);
@@ -1212,8 +1398,15 @@ void Graphics::Render()
 
   if (m_outer_asteroid3 != NULL)
   {
+    SetMaterialUniforms(glm::vec3(0.0f),
+                        glm::vec3(1.0f),
+                        glm::vec3(0.0f),
+                        1.0f);
+
     glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_outer_asteroid3->GetModel()));
     glUniform1i(m_shader->GetUniformLocation("instanced"), true);
+    glm::mat3 matrix = glm::transpose(glm::inverse(glm::mat3(m_outer_asteroid3->GetModel())));
+    glUniformMatrix3fv(m_normalMatrix, 1, GL_FALSE, glm::value_ptr(matrix));
     glUniform1i(m_hasTexture, true);
     glUniform1i(m_has_nmap, false);
     glActiveTexture(GL_TEXTURE0);
@@ -1236,15 +1429,45 @@ void Graphics::Render()
   }
 }
 
+void Graphics::SetMaterialUniforms(const glm::vec3 &ambient,
+                                   const glm::vec3 &diffuse,
+                                   const glm::vec3 &specular,
+                                   float shininess)
+{
+  GLint loc;
+
+  loc = m_shader->GetUniformLocation("mat.ambient");
+  if (loc != INVALID_UNIFORM_LOCATION)
+    glUniform3fv(loc, 1, glm::value_ptr(ambient));
+
+  loc = m_shader->GetUniformLocation("mat.diffuse");
+  if (loc != INVALID_UNIFORM_LOCATION)
+    glUniform3fv(loc, 1, glm::value_ptr(diffuse));
+
+  loc = m_shader->GetUniformLocation("mat.specular");
+  if (loc != INVALID_UNIFORM_LOCATION)
+    glUniform3fv(loc, 1, glm::value_ptr(specular));
+
+  loc = m_shader->GetUniformLocation("mat.shininess");
+  if (loc != INVALID_UNIFORM_LOCATION)
+    glUniform1f(loc, shininess);
+}
+
 bool Graphics::collectShPrLocs()
 {
   bool anyProblem = true;
 
-  // Locate the projection matrix in the shader
   m_projectionMatrix = m_shader->GetUniformLocation("projectionMatrix");
   if (m_projectionMatrix == INVALID_UNIFORM_LOCATION)
   {
     printf("m_projectionMatrix not found\n");
+    anyProblem = false;
+  }
+
+  m_normalMatrix = m_shader->GetUniformLocation("normMatrix");
+  if (m_normalMatrix == INVALID_UNIFORM_LOCATION)
+  {
+    printf("normMatrix uniform not found\n");
     anyProblem = false;
   }
 
