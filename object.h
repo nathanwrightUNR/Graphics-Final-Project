@@ -39,6 +39,8 @@ public:
 
   void Instance(std::vector<glm::mat4> &transforms);
 
+  void UpdateInstanceBuffer(std::vector<glm::mat4> &transforms);
+
   /**
    * @brief get the model.
    *

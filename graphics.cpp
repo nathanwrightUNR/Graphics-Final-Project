@@ -152,68 +152,49 @@ bool Graphics::Initialize(int width, int height)
   glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
   // endof skybox rendering code
 
-  for (int i = 0; i < 200; i++)
-  {
-    float theta = glm::radians((float)(rand() % 360));
-    float r = 9.5f + (float)(rand() % 100) / 100.f;
-
-    float x = glm::cos(theta) * r;
-    float z = glm::sin(theta) * r;
-    float y = ((rand() % 100) - 50) * 0.01f;
-
-    glm::mat4 transform = glm::translate(glm::mat4(1.f), glm::vec3(x, y, z));
-    transform = glm::rotate(transform, glm::radians((float)(rand() % 360)), glm::vec3(0.f, 1.f, 0.f));
-    transform = glm::scale(transform, glm::vec3(0.1f));
-
-    m_inner_asteroid_belt.push_back(transform);
-  }
+  generateAsteroidTransforms(m_inner_asteroid_belt1, m_inner_asteroid_angles1, 60, 9.5f, 100);
+  generateAsteroidTransforms(m_inner_asteroid_belt2, m_inner_asteroid_angles2, 60, 9.5f, 100);
+  generateAsteroidTransforms(m_inner_asteroid_belt3, m_inner_asteroid_angles3, 60, 9.5f, 100);
 
   m_inner_asteroid1 = new Mesh(glm::vec3(2.f, 3.f, -5.f),
-                               "../assets/Asteroid/1132 T-3 Durech.obj");
+                               "../assets/Asteroid/1132 T-3 Durech.obj",
+                               "../assets/Planetary Textures/Haumea.jpg");
 
-  m_inner_asteroid1->Instance(this->m_inner_asteroid_belt);
+  m_inner_asteroid1->Instance(this->m_inner_asteroid_belt1);
 
   m_inner_asteroid2 = new Mesh(glm::vec3(2.f, 3.f, -5.f),
-                               "../assets/Asteroid/1978 XX Durech.obj");
+                               "../assets/Asteroid/1978 XX Durech.obj",
+                               "../assets/Planetary Textures/Eris.jpg");
 
-  m_inner_asteroid2->Instance(this->m_inner_asteroid_belt);
+  m_inner_asteroid2->Instance(this->m_inner_asteroid_belt2);
 
   m_inner_asteroid3 = new Mesh(glm::vec3(2.f, 3.f, -5.f),
-                               "../assets/Asteroid/1998 DQ3 Durech.obj");
+                               "../assets/Asteroid/1998 DQ3 Durech.obj",
+                               "../assets/Planetary Textures/Ceres.jpg");
 
-  m_inner_asteroid3->Instance(this->m_inner_asteroid_belt);
+  generateAsteroidTransforms(m_outer_asteroid_belt1, m_outer_asteroid_angles1, 400, 24.5f, 500);
+  generateAsteroidTransforms(m_outer_asteroid_belt2, m_outer_asteroid_angles2, 400, 24.5f, 500);
+  generateAsteroidTransforms(m_outer_asteroid_belt3, m_outer_asteroid_angles3, 400, 24.5f, 500);
 
-  for (int i = 0; i < 800; i++)
-  {
-    float theta = glm::radians((float)(rand() % 360));
-    float r = 24.5f + (float)(rand() % 300) / 100.f;
-
-    float x = glm::cos(theta) * r;
-    float z = glm::sin(theta) * r;
-    float y = ((rand() % 100) - 50) * 0.01f;
-    ;
-
-    glm::mat4 transform = glm::translate(glm::mat4(1.f), glm::vec3(x, y, z));
-    transform = glm::rotate(transform, glm::radians((float)(rand() % 360)), glm::vec3(0.f, 1.f, 0.f));
-    transform = glm::scale(transform, glm::vec3(0.1f));
-
-    m_outer_asteroid_belt.push_back(transform);
-  }
+  m_inner_asteroid3->Instance(this->m_inner_asteroid_belt3);
 
   m_outer_asteroid1 = new Mesh(glm::vec3(2.f, 3.f, -5.f),
-                               "../assets/Asteroid/1132 T-3 Durech.obj");
+                               "../assets/Asteroid/1132 T-3 Durech.obj",
+                               "../assets/Planetary Textures/Haumea.jpg");
 
-  m_outer_asteroid1->Instance(this->m_outer_asteroid_belt);
+  m_outer_asteroid1->Instance(this->m_outer_asteroid_belt1);
 
   m_outer_asteroid2 = new Mesh(glm::vec3(2.f, 3.f, -5.f),
-                               "../assets/Asteroid/1978 XX Durech.obj");
+                               "../assets/Asteroid/1978 XX Durech.obj",
+                               "../assets/Planetary Textures/Eris.jpg");
 
-  m_outer_asteroid2->Instance(this->m_outer_asteroid_belt);
+  m_outer_asteroid2->Instance(this->m_outer_asteroid_belt2);
 
   m_outer_asteroid3 = new Mesh(glm::vec3(2.f, 3.f, -5.f),
-                               "../assets/Asteroid/1998 DQ3 Durech.obj");
+                               "../assets/Asteroid/1998 DQ3 Durech.obj",
+                               "../assets/Planetary Textures/Ceres.jpg");
 
-  m_outer_asteroid3->Instance(this->m_outer_asteroid_belt);
+  m_outer_asteroid3->Instance(this->m_outer_asteroid_belt3);
 
   m_halleys = new Mesh(glm::vec3(2.f, 3.f, -5.f),
                        "../assets/Asteroid/Halley Giotto_Vega Stooke Model 1.obj");
@@ -520,6 +501,14 @@ void Graphics::Update(double dt)
 
   if (m_neptune_trace != NULL)
     m_neptune_trace->Update(glm::rotate(glm::mat4(1.f), glm::radians(-90.f), glm::vec3(1, 0, 0)));
+
+  updateAsteroidBelt(m_inner_asteroid_belt1, m_inner_asteroid1);
+  updateAsteroidBelt(m_inner_asteroid_belt2, m_inner_asteroid2);
+  updateAsteroidBelt(m_inner_asteroid_belt3, m_inner_asteroid3);
+
+  updateAsteroidBelt(m_outer_asteroid_belt1, m_outer_asteroid1);
+  updateAsteroidBelt(m_outer_asteroid_belt2, m_outer_asteroid2);
+  updateAsteroidBelt(m_outer_asteroid_belt3, m_outer_asteroid3);
 }
 
 void Graphics::Render()
@@ -1135,43 +1124,105 @@ void Graphics::Render()
     m_neptune_trace->Render(m_positionAttrib, m_colorAttrib, m_tcAttrib, m_hasTexture, m_NpAttrib, m_has_nmap);
   }
 
-  glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(glm::mat4(1.f)));
-  glUniform1i(m_hasTexture, false);
-  glUniform1i(m_has_nmap, false);
-
   if (m_inner_asteroid1 != NULL)
   {
+    glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_inner_asteroid1->GetModel()));
     glUniform1i(m_shader->GetUniformLocation("instanced"), true);
+    glUniform1i(m_hasTexture, true);
+    glUniform1i(m_has_nmap, false);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, m_inner_asteroid1->getTextureID());
+    GLuint sampler = m_shader->GetUniformLocation("sp");
+    if (sampler == INVALID_UNIFORM_LOCATION)
+    {
+      printf("Sampler Not found not found\n");
+    }
+    glUniform1i(sampler, 0);
     m_inner_asteroid1->Render(m_positionAttrib, m_colorAttrib, m_tcAttrib, m_hasTexture, m_NpAttrib, m_has_nmap);
   }
 
   if (m_inner_asteroid2 != NULL)
   {
+    glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_inner_asteroid2->GetModel()));
     glUniform1i(m_shader->GetUniformLocation("instanced"), true);
+    glUniform1i(m_hasTexture, true);
+    glUniform1i(m_has_nmap, false);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, m_inner_asteroid2->getTextureID());
+    GLuint sampler = m_shader->GetUniformLocation("sp");
+    if (sampler == INVALID_UNIFORM_LOCATION)
+    {
+      printf("Sampler Not found not found\n");
+    }
+    glUniform1i(sampler, 0);
     m_inner_asteroid2->Render(m_positionAttrib, m_colorAttrib, m_tcAttrib, m_hasTexture, m_NpAttrib, m_has_nmap);
   }
 
   if (m_inner_asteroid3 != NULL)
   {
+    glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_inner_asteroid3->GetModel()));
     glUniform1i(m_shader->GetUniformLocation("instanced"), true);
+    glUniform1i(m_hasTexture, true);
+    glUniform1i(m_has_nmap, false);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, m_inner_asteroid3->getTextureID());
+    GLuint sampler = m_shader->GetUniformLocation("sp");
+    if (sampler == INVALID_UNIFORM_LOCATION)
+    {
+      printf("Sampler Not found not found\n");
+    }
+    glUniform1i(sampler, 0);
     m_inner_asteroid3->Render(m_positionAttrib, m_colorAttrib, m_tcAttrib, m_hasTexture, m_NpAttrib, m_has_nmap);
   }
 
   if (m_outer_asteroid1 != NULL)
   {
+    glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_outer_asteroid1->GetModel()));
     glUniform1i(m_shader->GetUniformLocation("instanced"), true);
+    glUniform1i(m_hasTexture, true);
+    glUniform1i(m_has_nmap, false);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, m_outer_asteroid1->getTextureID());
+    GLuint sampler = m_shader->GetUniformLocation("sp");
+    if (sampler == INVALID_UNIFORM_LOCATION)
+    {
+      printf("Sampler Not found not found\n");
+    }
+    glUniform1i(sampler, 0);
     m_outer_asteroid1->Render(m_positionAttrib, m_colorAttrib, m_tcAttrib, m_hasTexture, m_NpAttrib, m_has_nmap);
   }
 
   if (m_outer_asteroid2 != NULL)
   {
+    glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_outer_asteroid2->GetModel()));
     glUniform1i(m_shader->GetUniformLocation("instanced"), true);
+    glUniform1i(m_hasTexture, true);
+    glUniform1i(m_has_nmap, false);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, m_outer_asteroid2->getTextureID());
+    GLuint sampler = m_shader->GetUniformLocation("sp");
+    if (sampler == INVALID_UNIFORM_LOCATION)
+    {
+      printf("Sampler Not found not found\n");
+    }
+    glUniform1i(sampler, 0);
     m_outer_asteroid2->Render(m_positionAttrib, m_colorAttrib, m_tcAttrib, m_hasTexture, m_NpAttrib, m_has_nmap);
   }
 
   if (m_outer_asteroid3 != NULL)
   {
+    glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_outer_asteroid3->GetModel()));
     glUniform1i(m_shader->GetUniformLocation("instanced"), true);
+    glUniform1i(m_hasTexture, true);
+    glUniform1i(m_has_nmap, false);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, m_outer_asteroid3->getTextureID());
+    GLuint sampler = m_shader->GetUniformLocation("sp");
+    if (sampler == INVALID_UNIFORM_LOCATION)
+    {
+      printf("Sampler Not found not found\n");
+    }
+    glUniform1i(sampler, 0);
     m_outer_asteroid3->Render(m_positionAttrib, m_colorAttrib, m_tcAttrib, m_hasTexture, m_NpAttrib, m_has_nmap);
   }
 
@@ -1394,4 +1445,53 @@ GLuint Graphics::skyboxCubeMap()
   glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 
   return textureID;
+}
+
+void Graphics::generateAsteroidTransforms(std::vector<glm::mat4> &belt,
+                                          std::vector<float> &angles,
+                                          int count,
+                                          float radius,
+                                          int span)
+{
+  belt.clear();
+  angles.clear();
+
+  for (int i = 0; i < count; i++)
+  {
+    float theta = glm::radians((float)(rand() % 360));
+    float r = radius + (float)(rand() % span) / 100.f;
+
+    float x = glm::cos(theta) * r;
+    float z = glm::sin(theta) * r;
+    float y = ((rand() % 100) - 50) * 0.01f;
+
+    glm::mat4 transform = glm::translate(glm::mat4(1.f), glm::vec3(x, y, z));
+    transform = glm::rotate(transform, glm::radians((float)(rand() % 360)), glm::vec3(0.f, 1.f, 0.f));
+    transform = glm::scale(transform, glm::vec3(0.1f));
+
+    belt.push_back(transform);
+    angles.push_back(theta);
+  }
+}
+
+void Graphics::updateAsteroidBelt(std::vector<glm::mat4> &belt, Object *asteroid)
+{
+  for (auto &transform : belt)
+  {
+    glm::vec3 pos = glm::vec3(transform[3]);
+
+    float r = glm::length(glm::vec2(pos.x, pos.z));
+    float theta = glm::atan(pos.z, pos.x) + glm::radians(0.02f);
+
+    float x = glm::cos(theta) * r;
+    float z = glm::sin(theta) * r;
+    float y = pos.y;
+
+    glm::mat4 updated = glm::translate(glm::mat4(1.f), glm::vec3(x, y, z));
+    updated = glm::scale(updated, glm::vec3(0.1f));
+
+    transform = updated;
+  }
+
+  asteroid->UpdateInstanceBuffer(belt);
 }

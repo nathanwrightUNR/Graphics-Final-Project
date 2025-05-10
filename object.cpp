@@ -112,3 +112,10 @@ void Object::Instance(std::vector<glm::mat4> &transforms)
 
 	glBindVertexArray(0);
 }
+
+void Object::UpdateInstanceBuffer(std::vector<glm::mat4> &transforms)
+{
+	glBindBuffer(GL_ARRAY_BUFFER, iVB);
+	glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(glm::mat4) * transforms.size(), transforms.data());
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+}

@@ -2,6 +2,9 @@
 
 Mesh::Mesh()
 {
+  this->Vertices.clear();
+  this->Indices.clear();
+
   this->createVertices();
   this->InitBuffers();
   this->setupModelMatrix(glm::vec3(0., 0., 0.), 0., 1.);
@@ -9,6 +12,9 @@ Mesh::Mesh()
 
 Mesh::Mesh(glm::vec3 pivot, const char *fname)
 {
+  this->Vertices.clear();
+  this->Indices.clear();
+
   // Vertex Set Up
   this->loadModelFromFile(fname);
 
@@ -29,6 +35,9 @@ Mesh::Mesh(glm::vec3 pivot, const char *fname)
 
 Mesh::Mesh(glm::vec3 pivot, const char *fname, const char *tname)
 {
+  this->Vertices.clear();
+  this->Indices.clear();
+
   // Vertex Set Up
   this->loadModelFromFile(fname);
 
@@ -55,6 +64,7 @@ Mesh::Mesh(glm::vec3 pivot, const char *fname, const char *tname)
 
 bool Mesh::loadModelFromFile(const char *path)
 {
+  std::string str = path;
   Assimp::Importer importer;
   const aiScene *scene = importer.ReadFile(path, aiProcess_Triangulate);
 
@@ -77,14 +87,21 @@ bool Mesh::loadModelFromFile(const char *path)
         aiVector3D pos = mesh->mVertices[index];
         aiVector3D norm = mesh->HasNormals() ? mesh->mNormals[index] : aiVector3D(0.0f, 0.0f, 0.0f);
         aiVector3D tex(0.0f, 0.0f, 0.0f);
+
+        glm::vec2 texcoord;
+
         if (mesh->HasTextureCoords(0))
         {
           tex = mesh->mTextureCoords[0][index];
+          texcoord = glm::vec2(tex.x, tex.y);
+        }
+        else
+        {
+          texcoord = glm::vec2((pos.x + 1.0f) * 0.5f, (pos.z + 1.0f) * 0.5f);
         }
 
         glm::vec3 position(pos.x, pos.y, pos.z);
         glm::vec3 normal(norm.x, norm.y, norm.z);
-        glm::vec2 texcoord(tex.x, tex.y);
 
         this->Vertices.push_back(Vertex(position, normal, texcoord));
       }

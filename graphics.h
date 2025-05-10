@@ -52,6 +52,13 @@ public:
 
   void Update(double dt);
 
+  void generateAsteroidTransforms(std::vector<glm::mat4> &belt,
+                                  std::vector<float> &angles,
+                                  int count,
+                                  float r,
+                                  int span);
+
+  void updateAsteroidBelt(std::vector<glm::mat4> &belt, Object *asteroid);
   /**
    * @brief
    * clears screen and enables shaders, pass projection
@@ -113,12 +120,26 @@ private:
   Object *m_uranus_trace;
   Object *m_neptune_trace;
 
-  std::vector<glm::mat4> m_inner_asteroid_belt;
+  std::vector<glm::mat4> m_inner_asteroid_belt1;
+  std::vector<glm::mat4> m_inner_asteroid_belt2;
+  std::vector<glm::mat4> m_inner_asteroid_belt3;
+
+  std::vector<float> m_inner_asteroid_angles1;
+  std::vector<float> m_inner_asteroid_angles2;
+  std::vector<float> m_inner_asteroid_angles3;
+
   Object *m_inner_asteroid1;
   Object *m_inner_asteroid2;
   Object *m_inner_asteroid3;
 
-  std::vector<glm::mat4> m_outer_asteroid_belt;
+  std::vector<glm::mat4> m_outer_asteroid_belt1;
+  std::vector<glm::mat4> m_outer_asteroid_belt2;
+  std::vector<glm::mat4> m_outer_asteroid_belt3;
+
+  std::vector<float> m_outer_asteroid_angles1;
+  std::vector<float> m_outer_asteroid_angles2;
+  std::vector<float> m_outer_asteroid_angles3;
+
   Object *m_outer_asteroid1;
   Object *m_outer_asteroid2;
   Object *m_outer_asteroid3;
