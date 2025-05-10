@@ -37,38 +37,30 @@ bool Skybox::AddShader(GLenum ShaderType)
 
     if (ShaderType == GL_VERTEX_SHADER)
     {
-        s = R"(
-        #version 410 
-
-        layout(location = 0) in vec3 position;
-        out vec3 tc;
-
-        uniform mat4 v_matrix;
-        uniform mat4 proj_matrix;
-
-        void main(void)
-        {
-            tc = position;
-           mat4 vrot_matrix = mat4(mat3(v_matrix)); // remove translation
-            gl_Position = proj_matrix * vrot_matrix * vec4(position, 1.0);
-        }
-        )";
+        s = "#version 410\n\
+            layout (location = 0) in vec3 position; \
+            out vec3 texCoord; \
+            uniform mat4 proj_matrix; \
+            uniform mat4 v_matrix; \
+            void main() \
+            { \
+                vec4 pos = proj_matrix * mat4(mat3(v_matrix)) * vec4(position, 1.0); \
+                gl_Position = pos.xyww; \
+                texCoord = position; \
+            }";
     }
     else if (ShaderType == GL_FRAGMENT_SHADER)
     {
-        s = R"(
-        #version 410 
-
-        in vec3 tc;
-        out vec4 fragColor;
-
-        uniform samplerCube samp;
-
-        void main(void)
-        {
-            fragColor = texture(samp, tc);
-        }
-        )";
+        s = "#version 410\n\
+            in vec3 texCoord; \
+            out vec4 frag_color; \
+            uniform samplerCube samp; \
+            uniform bool is_emissive; \
+            void main() \
+            { \
+                vec4 tex = texture(samp, texCoord); \
+                frag_color = is_emissive ? tex * 0.3 : tex; \
+            }";
     }
     else
     {

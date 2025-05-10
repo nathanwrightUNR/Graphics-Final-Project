@@ -93,16 +93,22 @@ bool Shader::AddShader(GLenum ShaderType)
           uniform material mat; \
           \
           out vec4 frag_color; \
+          uniform float brightness; \
           \
           void main(void) \
           { \
-            vec4 base_color = hasTexture ? texture(sp, tc) : vec4(1.0); \
+            vec4 base_color = hasTexture ? texture(sp, tc) * brightness : vec4(brightness); \
             \
             if (is_emissive) { \
-              frag_color = base_color; \
-            } else { \
+              vec4 t = texture(sp, tc); \
+              frag_color = t * 0.4; \
+              return; \
+            } \
+            else \
+            { \
               vec3 norm = normalize(varNorm); \
-              if (hasNormalMap) { \
+              if (hasNormalMap) \
+              { \
                 norm = normalize(norm + texture(samp1, tc).xyz * 2.0 - 1.0); \
               } \
               vec3 light_dir = normalize(light_pos - frag_pos); \

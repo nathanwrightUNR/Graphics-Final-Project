@@ -527,6 +527,7 @@ void Graphics::Render()
   {
     printf("Skybox sampler not found\n");
   }
+  glUniform1i(m_skybox->GetUniformLocation("is_emissive"), true);
   glUniform1i(skyboxSampler, 0);
   glDepthMask(GL_FALSE);
   glDisable(GL_DEPTH_TEST);
@@ -550,13 +551,13 @@ void Graphics::Render()
   m_shader->Enable();
 
   glm::mat4 view = m_camera->GetView();
-  glm::vec3 viewPos = glm::vec3(glm::inverse(view)[3]);
+  glm::vec3 view_pos = glm::vec3(glm::inverse(view)[3]);
 
   glm::vec4 light = m_sun->GetModel() * glm::vec4(0, 0, 0, 1);
-  glm::vec3 lightPos = glm::vec3(light);
+  glm::vec3 light_pos = glm::vec3(light);
 
-  glUniform3f(m_shader->GetUniformLocation("view_pos"), viewPos.x, viewPos.y, viewPos.z);
-  glUniform3f(m_shader->GetUniformLocation("light_pos"), lightPos.x, lightPos.y, lightPos.z);
+  glUniform3f(m_shader->GetUniformLocation("view_pos"), view_pos.x, view_pos.y, view_pos.z);
+  glUniform3f(m_shader->GetUniformLocation("light_pos"), light_pos.x, light_pos.y, light_pos.z);
   glUniform3f(m_shader->GetUniformLocation("light_color"), 1.0f, 1.0f, 1.0f);
   glUniform1i(m_shader->GetUniformLocation("is_emissive"), false);
 
@@ -566,11 +567,13 @@ void Graphics::Render()
 
   if (m_sun != NULL)
   {
-    SetMaterialUniforms(glm::vec3(1.0f, 0.9f, 0.2f), // ambient
-                        glm::vec3(1.0f, 0.8f, 0.1f), // diffuse
-                        glm::vec3(1.0f, 1.0f, 0.5f), // specular
-                        64.0f);                      // shininess
+    SetMaterialUniforms(glm::vec3(1.0f), // ambient
+                        glm::vec3(0.8f), // diffuse
+                        glm::vec3(0.4f), // specular
+                        8.0f             // shininess
+    );
 
+    glUniform1i(m_shader->GetUniformLocation("is_emissive"), false);
     glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_sun->GetModel()));
     glUniform1i(m_shader->GetUniformLocation("instanced"), false);
     glm::mat3 matrix = glm::transpose(glm::inverse(glm::mat3(m_sun->GetModel())));
@@ -666,6 +669,8 @@ void Graphics::Render()
                         glm::vec3(1.0f),
                         glm::vec3(0.4f),
                         32.0f);
+
+    glUniform1f(m_shader->GetUniformLocation("brightness"), 1.2f);
 
     glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_mercury->GetModel()));
     glUniform1i(m_shader->GetUniformLocation("instanced"), false);
@@ -796,6 +801,7 @@ void Graphics::Render()
                         glm::vec3(1.0f),
                         glm::vec3(0.4f),
                         32.0f);
+
     glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_earth->GetModel()));
     glUniform1i(m_shader->GetUniformLocation("instanced"), false);
     glm::mat3 matrix = glm::transpose(glm::inverse(glm::mat3(m_earth->GetModel())));
@@ -803,6 +809,7 @@ void Graphics::Render()
 
     if (m_earth->hasTex)
     {
+      glUniform1f(m_shader->GetUniformLocation("brightness"), 1.1f);
       glUniform1i(m_hasTexture, true);
       glActiveTexture(GL_TEXTURE0);
       glBindTexture(GL_TEXTURE_2D, m_earth->getTextureID());
@@ -835,6 +842,7 @@ void Graphics::Render()
     }
 
     m_earth->Render(m_positionAttrib, m_colorAttrib, m_tcAttrib, m_hasTexture, m_NpAttrib, m_has_nmap);
+    glUniform1f(m_shader->GetUniformLocation("brightness"), 1.f);
   }
 
   if (m_moon != NULL)
@@ -974,6 +982,7 @@ void Graphics::Render()
                         glm::vec3(0.4f),
                         32.0f);
 
+    glUniform1f(m_shader->GetUniformLocation("brightness"), .7f);
     glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_jupiter->GetModel()));
     glUniform1i(m_shader->GetUniformLocation("instanced"), false);
     glm::mat3 matrix = glm::transpose(glm::inverse(glm::mat3(m_jupiter->GetModel())));
@@ -1014,6 +1023,8 @@ void Graphics::Render()
 
     m_jupiter->Render(m_positionAttrib, m_colorAttrib, m_tcAttrib, m_hasTexture, m_NpAttrib, m_has_nmap);
   }
+
+  glUniform1f(m_shader->GetUniformLocation("brightness"), 1.f);
 
   if (m_jupiter_trace != NULL)
   {
