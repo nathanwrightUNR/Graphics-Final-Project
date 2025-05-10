@@ -172,9 +172,9 @@ bool Graphics::Initialize(int width, int height)
                                "../assets/Asteroid/1998 DQ3 Durech.obj",
                                "../assets/Planetary Textures/Ceres.jpg");
 
-  generateAsteroidTransforms(m_outer_asteroid_belt1, m_outer_asteroid_angles1, 800, 41.5f, 1200);
-  generateAsteroidTransforms(m_outer_asteroid_belt2, m_outer_asteroid_angles2, 800, 41.5f, 1200);
-  generateAsteroidTransforms(m_outer_asteroid_belt3, m_outer_asteroid_angles3, 800, 41.5f, 1200);
+  generateAsteroidTransforms(m_outer_asteroid_belt1, m_outer_asteroid_angles1, 1000, 41.5f, 1200);
+  generateAsteroidTransforms(m_outer_asteroid_belt2, m_outer_asteroid_angles2, 1000, 41.5f, 1200);
+  generateAsteroidTransforms(m_outer_asteroid_belt3, m_outer_asteroid_angles3, 1000, 41.5f, 1200);
 
   m_inner_asteroid3->Instance(this->m_inner_asteroid_belt3);
 
@@ -204,7 +204,7 @@ bool Graphics::Initialize(int width, int height)
                         "../assets/SpaceShip-1/SpaceShip-1.obj",
                         "../assets/SpaceShip-1/SpaceShip-1.png");
 
-  m_sun = new Sphere(64, 0., 5.f, "../assets/Planetary Textures/2k_sun.jpg");
+  m_sun = new Sphere(64, 0., 7.f, "../assets/Planetary Textures/2k_sun.jpg");
 
   m_mercury = new Sphere(64, 0, 3.f, "../assets/Planetary Textures/Mercury.jpg",
                          "../assets/Planetary Textures/Mercury-n.jpg");
