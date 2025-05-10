@@ -152,9 +152,9 @@ bool Graphics::Initialize(int width, int height)
   glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
   // endof skybox rendering code
 
-  generateAsteroidTransforms(m_inner_asteroid_belt1, m_inner_asteroid_angles1, 60, 9.5f, 100);
-  generateAsteroidTransforms(m_inner_asteroid_belt2, m_inner_asteroid_angles2, 60, 9.5f, 100);
-  generateAsteroidTransforms(m_inner_asteroid_belt3, m_inner_asteroid_angles3, 60, 9.5f, 100);
+  generateAsteroidTransforms(m_inner_asteroid_belt1, m_inner_asteroid_angles1, 200, 14.f, 250);
+  generateAsteroidTransforms(m_inner_asteroid_belt2, m_inner_asteroid_angles2, 200, 14.f, 250);
+  generateAsteroidTransforms(m_inner_asteroid_belt3, m_inner_asteroid_angles3, 200, 14.f, 250);
 
   m_inner_asteroid1 = new Mesh(glm::vec3(2.f, 3.f, -5.f),
                                "../assets/Asteroid/1132 T-3 Durech.obj",
@@ -172,9 +172,9 @@ bool Graphics::Initialize(int width, int height)
                                "../assets/Asteroid/1998 DQ3 Durech.obj",
                                "../assets/Planetary Textures/Ceres.jpg");
 
-  generateAsteroidTransforms(m_outer_asteroid_belt1, m_outer_asteroid_angles1, 400, 24.5f, 500);
-  generateAsteroidTransforms(m_outer_asteroid_belt2, m_outer_asteroid_angles2, 400, 24.5f, 500);
-  generateAsteroidTransforms(m_outer_asteroid_belt3, m_outer_asteroid_angles3, 400, 24.5f, 500);
+  generateAsteroidTransforms(m_outer_asteroid_belt1, m_outer_asteroid_angles1, 800, 41.5f, 1200);
+  generateAsteroidTransforms(m_outer_asteroid_belt2, m_outer_asteroid_angles2, 800, 41.5f, 1200);
+  generateAsteroidTransforms(m_outer_asteroid_belt3, m_outer_asteroid_angles3, 800, 41.5f, 1200);
 
   m_inner_asteroid3->Instance(this->m_inner_asteroid_belt3);
 
@@ -203,51 +203,51 @@ bool Graphics::Initialize(int width, int height)
                         "../assets/SpaceShip-1/SpaceShip-1.obj",
                         "../assets/SpaceShip-1/SpaceShip-1.png");
 
-  m_sun = new Sphere(64, "../assets/Planetary Textures/2k_sun.jpg");
+  m_sun = new Sphere(64, 0., "../assets/Planetary Textures/2k_sun.jpg");
 
-  m_mercury = new Sphere(64, "../assets/Planetary Textures/Mercury.jpg",
+  m_mercury = new Sphere(64, 90, "../assets/Planetary Textures/Mercury.jpg",
                          "../assets/Planetary Textures/Mercury-n.jpg");
 
-  m_mercury_trace = new Ring(64, 4.425, 4.575);
+  m_mercury_trace = new Ring(64, 4.45, 4.55);
 
-  m_venus = new Sphere(64, "../assets/Planetary Textures/Venus.jpg",
+  m_venus = new Sphere(64, 45, "../assets/Planetary Textures/Venus.jpg",
                        "../assets/Planetary Textures/Venus-n.jpg");
 
-  m_venus_trace = new Ring(64, 2.925, 3.075);
+  m_venus_trace = new Ring(64, 6.45, 6.55);
 
-  m_earth = new Sphere(64, "../assets/Planetary Textures/2k_earth_daymap.jpg",
+  m_earth = new Sphere(64, 90, "../assets/Planetary Textures/2k_earth_daymap.jpg",
                        "../assets/Planetary Textures/2k_earth_daymap-n.jpg");
 
-  m_moon = new Sphere(64, "../assets/Planetary Textures/2k_moon.jpg",
+  m_moon = new Sphere(64, 0, "../assets/Planetary Textures/2k_moon.jpg",
                       "../assets/Planetary Textures/2k_moon-n.jpg");
 
-  m_earth_trace = new Ring(64, 5.925, 6.075);
+  m_earth_trace = new Ring(64, 9.45, 9.55);
 
-  m_mars = new Sphere(64, "../assets/Planetary Textures/Mars.jpg",
+  m_mars = new Sphere(64, 135, "../assets/Planetary Textures/Mars.jpg",
                       "../assets/Planetary Textures/Mars-n.jpg");
 
-  m_mars_trace = new Ring(64, 7.925, 8.075);
+  m_mars_trace = new Ring(64, 12.95, 13.05);
 
-  m_jupiter = new Sphere(64, "../assets/Planetary Textures/Jupiter.jpg",
+  m_jupiter = new Sphere(64, 180, "../assets/Planetary Textures/Jupiter.jpg",
                          "../assets/Planetary Textures/Jupiter-n.jpg");
 
-  m_jupiter_trace = new Ring(64, 11.925, 12.075);
+  m_jupiter_trace = new Ring(64, 17.95, 18.05);
 
-  m_saturn = new Sphere(64, "../assets/Planetary Textures/Saturn.jpg");
+  m_saturn = new Sphere(64, 225, "../assets/Planetary Textures/Saturn.jpg");
 
-  m_saturn_trace = new Ring(64, 15.925, 16.075);
+  m_saturn_trace = new Ring(64, 23.45, 23.55);
 
   m_saturn_ring = new Ring(128, 1.3, 2, "../assets/Planetary Textures/Saturn_ring.png");
 
-  m_uranus = new Sphere(64, "../assets/Planetary Textures/Uranus.jpg",
+  m_uranus = new Sphere(64, 270, "../assets/Planetary Textures/Uranus.jpg",
                         "../assets/Planetary Textures/Uranus-n.jpg");
 
-  m_uranus_trace = new Ring(64, 18.925, 19.075);
+  m_uranus_trace = new Ring(64, 30.45, 30.55);
 
-  m_neptune = new Sphere(64, "../assets/Planetary Textures/Neptune.jpg",
+  m_neptune = new Sphere(64, 315, "../assets/Planetary Textures/Neptune.jpg",
                          "../assets/Planetary Textures/Neptune-n.jpg");
 
-  m_neptune_trace = new Ring(64, 22.925, 23.075);
+  m_neptune_trace = new Ring(64, 38.45, 38.55);
 
   glEnable(GL_DEPTH_TEST);
   glDepthFunc(GL_LESS);
@@ -260,35 +260,29 @@ Camera *Graphics::getCamera() { return this->m_camera; }
 void Graphics::Update(double dt)
 {
   std::vector<float> speed, dist, rotSpeed, scale;
-  glm::vec3 rotVector;
+  glm::vec3 rotVector, orbit_pos;
 
-  float r, theta, x, z;
+  float theta;
   glm::mat4 localTransform;
 
   // position of the sun
-  r = 0.;
-  theta = glm::radians(0.);
-  x = r * glm::cos(theta);
-  z = r * glm::sin(theta);
   this->modelStack.push(glm::translate(glm::mat4(1.f), glm::vec3(0, 0, 0)));
   localTransform = this->modelStack.top();
-  localTransform *= glm::translate(glm::mat4(1.0f), glm::vec3(x, 0.0f, z));
 
   if (m_sun != NULL)
     m_sun->Update(localTransform);
 
   // animate mercury
-  speed = {1., 0., 1.};
-  dist = {3., 0., 3.};
+  speed = {0.08, 0., 0.08};
+  dist = {4.5, 0., 4.5};
   rotVector = {0., 1., 0.};
-  rotSpeed = {1.5, 1.5, 1.5};
+  rotSpeed = {.5, .5, .5};
   scale = {.4, .4, .4};
 
+  theta = speed[0] * dt + m_mercury->angle;
+  orbit_pos = glm::vec3(cos(theta) * dist[0], 0.f, sin(theta) * dist[2]);
   localTransform = this->modelStack.top();
-  localTransform *= glm::translate(glm::mat4(1.f),
-                                   glm::vec3(cos(speed[0] * dt) * dist[0],
-                                             0.f,
-                                             sin(speed[2] * dt) * dist[2]));
+  localTransform *= glm::translate(glm::mat4(1.f), orbit_pos);
   this->modelStack.push(localTransform);
   localTransform *= glm::rotate(glm::mat4(1.f), rotSpeed[0] * (float)dt, rotVector);
   localTransform *= glm::scale(glm::vec3(scale[0], scale[1], scale[2]));
@@ -298,19 +292,22 @@ void Graphics::Update(double dt)
     m_mercury->Update(localTransform);
 
   if (m_mercury_trace != NULL)
-    m_mercury_trace->Update(glm::rotate(glm::mat4(1.f), glm::radians(-90.f), glm::vec3(1, 0, 0)));
+  {
+    glm::mat4 trace_transform = glm::translate(glm::mat4(1.f), glm::vec3(0.f, -0.1f, 0.f));
+    trace_transform *= glm::rotate(glm::mat4(1.f), glm::radians(-90.f), glm::vec3(1, 0, 0));
+    m_mercury_trace->Update(trace_transform);
+  }
 
   // animate venus
-  speed = {0.625, 0., 0.625};
-  dist = {4.5, 0., 4.5};
-  rotSpeed = {1., 1., 1.};
+  speed = {0.06, 0., 0.06};
+  dist = {6.5, 0., 6.5};
+  rotSpeed = {.3, .3, .3};
   scale = {.5, .5, .5};
 
+  theta = speed[0] * dt + m_venus->angle;
+  orbit_pos = glm::vec3(cos(theta) * dist[0], 0.f, sin(theta) * dist[2]);
   localTransform = this->modelStack.top();
-  localTransform *= glm::translate(glm::mat4(1.f),
-                                   glm::vec3(cos(speed[0] * dt) * dist[0],
-                                             0.f,
-                                             sin(speed[2] * dt) * dist[2]));
+  localTransform *= glm::translate(glm::mat4(1.f), orbit_pos);
   this->modelStack.push(localTransform);
   localTransform *= glm::rotate(glm::mat4(1.f), rotSpeed[0] * (float)dt, rotVector);
   localTransform *= glm::scale(glm::vec3(scale[0], scale[1], scale[2]));
@@ -320,20 +317,23 @@ void Graphics::Update(double dt)
     m_venus->Update(localTransform);
 
   if (m_venus_trace != NULL)
-    m_venus_trace->Update(glm::rotate(glm::mat4(1.f), glm::radians(-90.f), glm::vec3(1, 0, 0)));
+  {
+    glm::mat4 trace_transform = glm::translate(glm::mat4(1.f), glm::vec3(0.f, -0.1f, 0.f));
+    trace_transform *= glm::rotate(glm::mat4(1.f), glm::radians(-90.f), glm::vec3(1, 0, 0));
+    m_venus_trace->Update(trace_transform);
+  }
 
   // animate earth
-  speed = {.5, 0., .5};
-  dist = {6., 0., 6.};
+  speed = {0.05, 0., 0.05};
+  dist = {9.5, 0., 9.5};
   rotVector = {0., 1., 0.};
-  rotSpeed = {1., 1., 1.};
+  rotSpeed = {.4, .4, .4};
   scale = {.5, .5, .5};
 
+  theta = speed[0] * dt + m_earth->angle;
+  orbit_pos = glm::vec3(cos(theta) * dist[0], 0.f, sin(theta) * dist[2]);
   localTransform = this->modelStack.top();
-  localTransform *= glm::translate(glm::mat4(1.f),
-                                   glm::vec3(cos(speed[0] * dt) * dist[0],
-                                             0.f,
-                                             sin(speed[2] * dt) * dist[2]));
+  localTransform *= glm::translate(glm::mat4(1.f), orbit_pos);
   this->modelStack.push(localTransform);
   localTransform *= glm::rotate(glm::mat4(1.f), rotSpeed[0] * (float)dt, rotVector);
   localTransform *= glm::scale(glm::vec3(scale[0], scale[1], scale[2]));
@@ -342,14 +342,18 @@ void Graphics::Update(double dt)
     m_earth->Update(localTransform);
 
   if (m_earth_trace != NULL)
-    m_earth_trace->Update(glm::rotate(glm::mat4(1.f), glm::radians(-90.f), glm::vec3(1, 0, 0)));
+  {
+    glm::mat4 trace_transform = glm::translate(glm::mat4(1.f), glm::vec3(0.f, -0.1f, 0.f));
+    trace_transform *= glm::rotate(glm::mat4(1.f), glm::radians(-90.f), glm::vec3(1, 0, 0));
+    m_earth_trace->Update(trace_transform);
+  }
 
   // animate moon
-  speed = {.9, 0., .9};
-  dist = {1.25, 0, 1.25};
+  speed = {.2, 0., .2};
+  dist = {1.5, 0, 1.5};
   rotVector = {1., 1., 1.};
   rotSpeed = {1., 1., 1.};
-  scale = {.2, .2, .2};
+  scale = {.1, .1, .1};
 
   localTransform = this->modelStack.top();
   localTransform *= glm::translate(glm::mat4(1.f),
@@ -368,17 +372,16 @@ void Graphics::Update(double dt)
   this->modelStack.pop();
 
   // animate mars
-  speed = {0.4, 0., 0.4};
-  dist = {8., 0., 8.};
+  speed = {0.04, 0., 0.04};
+  dist = {13., 0., 13.};
   rotVector = {0., 1., 0.};
-  rotSpeed = {0.75, 0.75, 0.75};
+  rotSpeed = {0.5, 0.5, 0.5};
   scale = {.4, .4, .4};
 
+  theta = speed[0] * dt + m_mars->angle;
+  orbit_pos = glm::vec3(cos(theta) * dist[0], 0.f, sin(theta) * dist[2]);
   localTransform = this->modelStack.top();
-  localTransform *= glm::translate(glm::mat4(1.f),
-                                   glm::vec3(cos(speed[0] * dt) * dist[0],
-                                             0.f,
-                                             sin(speed[2] * dt) * dist[2]));
+  localTransform *= glm::translate(glm::mat4(1.f), orbit_pos);
   this->modelStack.push(localTransform);
   localTransform *= glm::rotate(glm::mat4(1.f), rotSpeed[0] * (float)dt, rotVector);
   localTransform *= glm::scale(glm::vec3(scale[0], scale[1], scale[2]));
@@ -388,20 +391,23 @@ void Graphics::Update(double dt)
     m_mars->Update(localTransform);
 
   if (m_mars_trace != NULL)
-    m_mars_trace->Update(glm::rotate(glm::mat4(1.f), glm::radians(-90.f), glm::vec3(1, 0, 0)));
+  {
+    glm::mat4 trace_transform = glm::translate(glm::mat4(1.f), glm::vec3(0.f, -0.1f, 0.f));
+    trace_transform *= glm::rotate(glm::mat4(1.f), glm::radians(-90.f), glm::vec3(1, 0, 0));
+    m_mars_trace->Update(trace_transform);
+  }
 
   // animate jupiter
-  speed = {.275, 0., .275};
-  dist = {12., 0., 12.};
+  speed = {0.025, 0., 0.025};
+  dist = {18., 0., 18.};
   rotVector = {0., 1., 0.};
-  rotSpeed = {0.5, 0.5, 0.5};
+  rotSpeed = {0.3, 0.3, 0.3};
   scale = {.9, .9, .9};
 
+  theta = speed[0] * dt + m_jupiter->angle;
+  orbit_pos = glm::vec3(cos(theta) * dist[0], 0.f, sin(theta) * dist[2]);
   localTransform = this->modelStack.top();
-  localTransform *= glm::translate(glm::mat4(1.f),
-                                   glm::vec3(cos(speed[0] * dt) * dist[0],
-                                             0.f,
-                                             sin(speed[2] * dt) * dist[2]));
+  localTransform *= glm::translate(glm::mat4(1.f), orbit_pos);
   this->modelStack.push(localTransform);
   localTransform *= glm::rotate(glm::mat4(1.f), rotSpeed[0] * (float)dt, rotVector);
   localTransform *= glm::scale(glm::vec3(scale[0], scale[1], scale[2]));
@@ -414,17 +420,16 @@ void Graphics::Update(double dt)
     m_jupiter_trace->Update(glm::rotate(glm::mat4(1.f), glm::radians(-90.f), glm::vec3(1, 0, 0)));
 
   // animate saturn
-  speed = {.175, 0., .175};
-  dist = {16., 0., 16.};
+  speed = {0.015, 0., 0.015};
+  dist = {23.5, 0., 23.5};
   rotVector = {0., 1., 0.};
-  rotSpeed = {0.4, 0.4, 0.4};
+  rotSpeed = {0.2, 0.2, 0.2};
   scale = {.8, .8, .8};
 
+  theta = speed[0] * dt + m_saturn->angle;
+  orbit_pos = glm::vec3(cos(theta) * dist[0], 0.f, sin(theta) * dist[2]);
   localTransform = this->modelStack.top();
-  localTransform *= glm::translate(glm::mat4(1.f),
-                                   glm::vec3(cos(speed[0] * dt) * dist[0],
-                                             0.f,
-                                             sin(speed[2] * dt) * dist[2]));
+  localTransform *= glm::translate(glm::mat4(1.f), orbit_pos);
   this->modelStack.push(localTransform);
   localTransform *= glm::rotate(glm::mat4(1.f), rotSpeed[0] * (float)dt, rotVector);
   localTransform *= glm::scale(glm::vec3(scale[0], scale[1], scale[2]));
@@ -434,7 +439,11 @@ void Graphics::Update(double dt)
     m_saturn->Update(localTransform);
 
   if (m_saturn_trace != NULL)
-    m_saturn_trace->Update(glm::rotate(glm::mat4(1.f), glm::radians(-90.f), glm::vec3(1, 0, 0)));
+  {
+    glm::mat4 trace_transform = glm::translate(glm::mat4(1.f), glm::vec3(0.f, -0.1f, 0.f));
+    trace_transform *= glm::rotate(glm::mat4(1.f), glm::radians(-90.f), glm::vec3(1, 0, 0));
+    m_saturn_trace->Update(trace_transform);
+  }
 
   // position of saturn ring
   localTransform *= glm::rotate(glm::mat4(1.f), glm::radians(-90.f), glm::vec3(1, 0, 0));
@@ -443,17 +452,16 @@ void Graphics::Update(double dt)
     m_saturn_ring->Update(localTransform);
 
   // animate uranus
-  speed = {0.125, 0., 0.125};
-  dist = {19., 0., 19.};
+  speed = {0.01, 0., 0.01};
+  dist = {30.5, 0., 30.5};
   rotVector = {0., 1., 0.};
   rotSpeed = {0.3, 0.3, 0.3};
   scale = {.6, .6, .6};
 
+  theta = speed[0] * dt + m_uranus->angle;
+  orbit_pos = glm::vec3(cos(theta) * dist[0], 0.f, sin(theta) * dist[2]);
   localTransform = this->modelStack.top();
-  localTransform *= glm::translate(glm::mat4(1.f),
-                                   glm::vec3(cos(speed[0] * dt) * dist[0],
-                                             0.f,
-                                             sin(speed[2] * dt) * dist[2]));
+  localTransform *= glm::translate(glm::mat4(1.f), orbit_pos);
   this->modelStack.push(localTransform);
   localTransform *= glm::rotate(glm::mat4(1.f), rotSpeed[0] * (float)dt, rotVector);
   localTransform *= glm::scale(glm::vec3(scale[0], scale[1], scale[2]));
@@ -463,20 +471,23 @@ void Graphics::Update(double dt)
     m_uranus->Update(localTransform);
 
   if (m_uranus_trace != NULL)
-    m_uranus_trace->Update(glm::rotate(glm::mat4(1.f), glm::radians(-90.f), glm::vec3(1, 0, 0)));
+  {
+    glm::mat4 trace_transform = glm::translate(glm::mat4(1.f), glm::vec3(0.f, -0.1f, 0.f));
+    trace_transform *= glm::rotate(glm::mat4(1.f), glm::radians(-90.f), glm::vec3(1, 0, 0));
+    m_uranus_trace->Update(trace_transform);
+  }
 
   // animate neptune
-  speed = {.1, 0., .1};
-  dist = {23., 0., 23.};
+  speed = {0.0075, 0., 0.0075};
+  dist = {38.5, 0., 38.5};
   rotVector = {0., 1., 0.};
   rotSpeed = {0.25, 0.25, 0.25};
   scale = {.6, .6, .6};
 
+  theta = speed[0] * dt + m_neptune->angle;
+  orbit_pos = glm::vec3(cos(theta) * dist[0], 0.f, sin(theta) * dist[2]);
   localTransform = this->modelStack.top();
-  localTransform *= glm::translate(glm::mat4(1.f),
-                                   glm::vec3(cos(speed[0] * dt) * dist[0],
-                                             0.f,
-                                             sin(speed[2] * dt) * dist[2]));
+  localTransform *= glm::translate(glm::mat4(1.f), orbit_pos);
   this->modelStack.push(localTransform);
   localTransform *= glm::rotate(glm::mat4(1.f), rotSpeed[0] * (float)dt, rotVector);
   localTransform *= glm::scale(glm::vec3(scale[0], scale[1], scale[2]));
@@ -486,7 +497,11 @@ void Graphics::Update(double dt)
     m_neptune->Update(localTransform);
 
   if (m_neptune_trace != NULL)
-    m_neptune_trace->Update(glm::rotate(glm::mat4(1.f), glm::radians(-90.f), glm::vec3(1, 0, 0)));
+  {
+    glm::mat4 trace_transform = glm::translate(glm::mat4(1.f), glm::vec3(0.f, -0.1f, 0.f));
+    trace_transform *= glm::rotate(glm::mat4(1.f), glm::radians(-90.f), glm::vec3(1, 0, 0));
+    m_neptune_trace->Update(trace_transform);
+  }
 
   updateAsteroidBelt(m_inner_asteroid_belt1, m_inner_asteroid1);
   updateAsteroidBelt(m_inner_asteroid_belt2, m_inner_asteroid2);
@@ -1491,28 +1506,28 @@ Object *Graphics::getClosestPlanet()
 {
   glm::vec3 camera_pos = m_camera->GetPosition();
   float min = FLT_MAX;
-  Object *closest_planet;
+  Object *closest_object;
 
-  std::vector<Object *> planets = {
-      m_mercury, m_venus, m_earth, m_mars, m_jupiter,
+  std::vector<Object *> objects = {
+      m_sun, m_mercury, m_venus, m_earth, m_mars, m_jupiter,
       m_saturn, m_uranus, m_neptune};
 
-  for (Object *planet : planets)
+  for (Object *object : objects)
   {
-    if (!planet)
+    if (!object)
       continue;
 
-    glm::vec3 pos = glm::vec3(planet->GetModel()[3]);
+    glm::vec3 pos = glm::vec3(object->GetModel()[3]);
     float dist = glm::distance(camera_pos, pos);
 
     if (dist < min)
     {
       min = dist;
-      closest_planet = planet;
+      closest_object = object;
     }
   }
 
-  return closest_planet;
+  return closest_object;
 }
 
 void Graphics::SetOrbit(bool b)

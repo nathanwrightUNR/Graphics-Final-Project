@@ -58,6 +58,9 @@ public:
   bool hasNmap = false;
   GLuint getNormalMapID() { return m_normal_map ? m_normal_map->getTextureID() : 0; }
 
+  // angle for rotation.
+  float angle;
+
 protected:
   /**
    * @brief declares vertices and indices of the Object.
@@ -90,9 +93,6 @@ protected:
 
   // Index Buffer Object, stores the indices for drawing
   GLuint IB;
-
-  // angle for rotation.
-  float angle;
 
   glm::vec3 m_position = glm::vec3(0.f);
 

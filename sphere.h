@@ -6,8 +6,8 @@
 class Sphere : public Object
 {
 public:
-  Sphere(int prec, const char *tf);
-  Sphere(int prec, const char *tf, const char *nf);
+  Sphere(int prec, float angle, const char *tf);
+  Sphere(int prec, float angle, const char *tf, const char *nf);
 
 private:
   void createVertices() override;

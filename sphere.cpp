@@ -1,8 +1,9 @@
 #include "sphere.h"
 
-Sphere::Sphere(int prec, const char *tf)
+Sphere::Sphere(int prec, float angle, const char *tf)
 {
   this->prec = prec;
+  this->angle = angle;
   createVertices();
   InitBuffers();
   setupModelMatrix(glm::vec3(0., 0., 0.), 0., 1.);
@@ -17,9 +18,10 @@ Sphere::Sphere(int prec, const char *tf)
   hasNmap = false;
 }
 
-Sphere::Sphere(int prec, const char *tf, const char *nf)
+Sphere::Sphere(int prec, float angle, const char *tf, const char *nf)
 {
   this->prec = prec;
+  this->angle = angle;
   createVertices();
   InitBuffers();
   setupModelMatrix(glm::vec3(0., 0., 0.), 0., 1.);
