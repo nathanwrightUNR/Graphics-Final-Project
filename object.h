@@ -61,6 +61,8 @@ public:
   // angle for rotation.
   float angle;
 
+  float scale = 2.f;
+
 protected:
   /**
    * @brief declares vertices and indices of the Object.

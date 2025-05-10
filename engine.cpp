@@ -62,13 +62,14 @@ void Engine::Run()
 
     m_graphics->getCamera()->Update(dt);
 
-    if (first_person)
+    if (first_person && target)
     {
       // get position
       glm::vec3 planet_pos = target->GetModel()[3];
-      float angle = glfwGetTime() * 0.25f;
+      float angle = glfwGetTime() * 0.2f;
 
-      glm::vec3 offset = glm::vec3(glm::cos(angle), .65f, glm::sin(angle)) * 4.5f;
+      float scale = (target == nullptr) ? 4.5 : target->scale;
+      glm::vec3 offset = glm::vec3(glm::cos(angle), .25f, glm::sin(angle)) * scale;
       glm::vec3 orbit_pos = planet_pos + offset;
 
       camera->position = orbit_pos;

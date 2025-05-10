@@ -1,9 +1,10 @@
 #include "sphere.h"
 
-Sphere::Sphere(int prec, float angle, const char *tf)
+Sphere::Sphere(int prec, float angle, float scale, const char *tf)
 {
   this->prec = prec;
   this->angle = angle;
+  this->scale = scale;
   createVertices();
   InitBuffers();
   setupModelMatrix(glm::vec3(0., 0., 0.), 0., 1.);
@@ -18,10 +19,11 @@ Sphere::Sphere(int prec, float angle, const char *tf)
   hasNmap = false;
 }
 
-Sphere::Sphere(int prec, float angle, const char *tf, const char *nf)
+Sphere::Sphere(int prec, float angle, float scale, const char *tf, const char *nf)
 {
   this->prec = prec;
   this->angle = angle;
+  this->scale = scale;
   createVertices();
   InitBuffers();
   setupModelMatrix(glm::vec3(0., 0., 0.), 0., 1.);
@@ -42,8 +44,6 @@ Sphere::Sphere(int prec, float angle, const char *tf, const char *nf)
 
 void Sphere::createVertices()
 {
-  int prec = 100;
-
   std::vector<glm::vec2> texCoords;
   std::vector<glm::vec3> vertices;
   std::vector<glm::vec3> normals;

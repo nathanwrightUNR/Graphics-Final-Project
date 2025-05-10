@@ -2,9 +2,6 @@
 
 Mesh::Mesh()
 {
-  this->Vertices.clear();
-  this->Indices.clear();
-
   this->createVertices();
   this->InitBuffers();
   this->setupModelMatrix(glm::vec3(0., 0., 0.), 0., 1.);
@@ -12,9 +9,6 @@ Mesh::Mesh()
 
 Mesh::Mesh(glm::vec3 pivot, const char *fname)
 {
-  this->Vertices.clear();
-  this->Indices.clear();
-
   // Vertex Set Up
   this->loadModelFromFile(fname);
 
@@ -35,9 +29,6 @@ Mesh::Mesh(glm::vec3 pivot, const char *fname)
 
 Mesh::Mesh(glm::vec3 pivot, const char *fname, const char *tname)
 {
-  this->Vertices.clear();
-  this->Indices.clear();
-
   // Vertex Set Up
   this->loadModelFromFile(fname);
 

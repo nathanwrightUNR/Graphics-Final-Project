@@ -101,7 +101,7 @@ bool Shader::AddShader(GLenum ShaderType)
             \
             if (is_emissive) { \
               vec4 t = texture(sp, tc); \
-              frag_color = t * 0.4; \
+              frag_color = t * brightness; \
               return; \
             } \
             else \

@@ -50,7 +50,7 @@ public:
    */
   bool Initialize(int width, int height);
 
-  Object *getStarship();
+  Object *getStarship() { return this->m_starship; };
 
   void Update(double dt);
 
@@ -73,7 +73,7 @@ public:
 
   Camera *getCamera();
 
-  void SetOrbit(bool);
+  void SetOrbit(bool b) { this->oribing = b; }
 
   void SetMaterialUniforms(const glm::vec3 &ambient,
                            const glm::vec3 &diffuse,
@@ -109,7 +109,7 @@ private:
   GLint m_has_nmap;
   GLint m_NpAttrib;
 
-  // changed to vector of object pointers.
+  // objects
   Object *m_sun;
   Object *m_mercury;
   Object *m_venus;
@@ -121,9 +121,13 @@ private:
   Object *m_saturn_ring;
   Object *m_uranus;
   Object *m_neptune;
+  Object *m_ceres;
+  Object *m_haumea;
+  Object *m_eris;
 
   Object *m_starship;
 
+  // traces
   Object *m_mercury_trace;
   Object *m_venus_trace;
   Object *m_earth_trace;

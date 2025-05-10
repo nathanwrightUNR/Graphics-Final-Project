@@ -59,7 +59,7 @@ bool Skybox::AddShader(GLenum ShaderType)
             void main() \
             { \
                 vec4 tex = texture(samp, texCoord); \
-                frag_color = is_emissive ? tex * 0.3 : tex; \
+                frag_color = is_emissive ? tex * 1.03 : tex; \
             }";
     }
     else
