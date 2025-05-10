@@ -97,6 +97,7 @@ private:
 
   // running flag.
   bool m_running;
+  bool first_person = false;
 };
 
 #endif // ENGINE_H

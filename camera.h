@@ -32,6 +32,10 @@ public:
   glm::vec3 camera_front;
   glm::vec3 camera_up;
 
+  float base_fov = 40.0f;
+
+  void SetFirstPerson(bool enable);
+
 private:
   glm::mat4 projection;
   glm::mat4 view;

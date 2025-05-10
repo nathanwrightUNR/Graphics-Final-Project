@@ -65,8 +65,7 @@ void Engine::Run()
     glm::vec3 camera_pos = camera->GetPosition();
     glm::vec3 front = camera->GetFront();
 
-    // place ship 2 units in front of camera
-    glm::vec3 ship_pos = camera_pos + front * 2.0f;
+    glm::vec3 ship_pos = camera_pos - front * (first_person ? 1.f : -2.f);
 
     glm::mat4 rotation = glm::lookAt(glm::vec3(0.0f), front, glm::vec3(0, 1, 0)); // face forward
     rotation = glm::inverse(rotation);
@@ -85,12 +84,23 @@ void Engine::Run()
 
 void Engine::ProcessInput()
 {
+  static bool space_pressed_last_frame = false;
+
   if (glfwGetKey(m_window->getWindow(), GLFW_KEY_ESCAPE) == GLFW_PRESS)
     glfwSetWindowShouldClose(m_window->getWindow(), true);
 
   Camera *camera = this->m_graphics->getCamera();
-
   camera->forward = glfwGetKey(m_window->getWindow(), GLFW_KEY_W) == GLFW_PRESS;
+
+  bool space_pressed = glfwGetKey(m_window->getWindow(), GLFW_KEY_SPACE) == GLFW_PRESS;
+
+  if (space_pressed && !space_pressed_last_frame)
+  {
+    first_person = !first_person;
+    camera->SetFirstPerson(first_person);
+  }
+
+  space_pressed_last_frame = space_pressed;
 }
 
 float Engine::getDT()

@@ -77,3 +77,8 @@ glm::vec3 Camera::GetFront()
 {
   return this->camera_front;
 }
+
+void Camera::SetFirstPerson(bool enable)
+{
+  fov = enable ? base_fov * 0.5f : base_fov;
+}
