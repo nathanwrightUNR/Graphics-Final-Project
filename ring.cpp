@@ -1,5 +1,6 @@
 #include "ring.h"
 
+// consturctor for basic ring
 Ring::Ring(int prec, float inner_r, float outer_r)
 {
   this->prec = prec;
@@ -13,6 +14,7 @@ Ring::Ring(int prec, float inner_r, float outer_r)
   hasNmap = false;
 }
 
+// constructor for ring w texture and normal map
 Ring::Ring(int prec, float inner_r, float outer_r, const char *tf, const char *nf)
 {
   this->prec = prec;
@@ -35,6 +37,7 @@ Ring::Ring(int prec, float inner_r, float outer_r, const char *tf, const char *n
     hasNmap = false;
 }
 
+// constructor for ring with only texture
 Ring::Ring(int prec, float inner_r, float outer_r, const char *path)
 {
   this->prec = prec;
@@ -51,27 +54,36 @@ Ring::Ring(int prec, float inner_r, float outer_r, const char *path)
     hasTex = false;
 }
 
+// procedurally generate ring
 void Ring::createVertices()
 {
   std::vector<glm::vec3> vertices;
   std::vector<glm::vec3> normals;
   std::vector<glm::vec2> texCoords;
 
+  // basically you do triangles opositely orented and twist it into a circle
   for (int i = 0; i <= prec; i++)
   {
     float angle = glm::radians(i * 360.0f / prec);
-    float _cos = glm::cos(angle);
-    float _sin = glm::sin(angle);
 
-    vertices.push_back(glm::vec3(_cos * outer_r, _sin * outer_r, 0.0f));
+    // outer vertices at r = outer_r
+    vertices.push_back(glm::vec3(glm::cos(angle) * outer_r, glm::sin(angle) * outer_r, 0.0f));
     normals.push_back(glm::vec3(0.0f, 0.0f, 1.0f));
     texCoords.push_back(glm::vec2(1.0f, (float)i / prec));
 
-    vertices.push_back(glm::vec3(_cos * inner_r, _sin * inner_r, 0.0f));
+    // inner vertices at r = inner_r
+    vertices.push_back(glm::vec3(glm::cos(angle) * inner_r, glm::sin(angle) * inner_r, 0.0f));
     normals.push_back(glm::vec3(0.0f, 0.0f, 1.0f));
     texCoords.push_back(glm::vec2(0.0f, (float)i / prec));
   }
 
+  // calcualte indices by connecting triangle like ths:
+  /*
+   *  ______
+   *  \    //\
+   *   \  //  \
+   *    \//____\
+   */
   for (int i = 0; i < prec; i++)
   {
     int start = i * 2;
@@ -84,6 +96,7 @@ void Ring::createVertices()
     this->Indices.push_back(start + 2);
   }
 
+  // store in Vertex instances and pushback
   for (int i = 0; i < vertices.size(); ++i)
   {
     this->Vertices.push_back(Vertex(vertices[i], normals[i], texCoords[i]));

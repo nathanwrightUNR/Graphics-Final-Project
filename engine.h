@@ -97,7 +97,12 @@ private:
 
   // running flag.
   bool m_running;
+
+  // new flag for first person
   bool first_person = false;
+
+  // pointer to closes celestial obj
+  // if not within certain min distance its nullptr
   Object *target;
 };
 

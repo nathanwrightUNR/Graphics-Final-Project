@@ -13,6 +13,7 @@ void Object::Update(glm::mat4 model_matrix)
 	this->model = model_matrix;
 }
 
+// update position and scale to .01 since starship is huge
 void Object::Move(glm::vec3 direction, float speed, float dt)
 {
 	m_position += direction * speed * dt;
@@ -44,6 +45,7 @@ void Object::Render(GLint posAttribLoc, GLint colAttribLoc,
 	glVertexAttribPointer(tcAttribLoc, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)offsetof(Vertex, texcoord));
 	glVertexAttribPointer(nmAttribLoc, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)offsetof(Vertex, normal));
 
+	// set texture and normal map flags
 	if (m_texture != NULL)
 		glUniform1i(hasTextureLoc, true);
 
@@ -59,7 +61,8 @@ void Object::Render(GLint posAttribLoc, GLint colAttribLoc,
 	// Bind your Element Array
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IB);
 
-	// Render
+	// if its instanced call glDrawElementsInstanced
+	// otherwise regular glDrawElements
 	if (instanced)
 		glDrawElementsInstanced(GL_TRIANGLES, Indices.size(), GL_UNSIGNED_INT, 0, num_instances);
 	else
@@ -100,6 +103,7 @@ void Object::setupModelMatrix(glm::vec3 pivot, float angle, float scale)
 
 void Object::Instance(std::vector<glm::mat4> &transforms)
 {
+	// set up for instanced objects
 	num_instances = transforms.size();
 	instanced = true;
 
@@ -122,11 +126,13 @@ void Object::Instance(std::vector<glm::mat4> &transforms)
 
 void Object::UpdateInstanceBuffer(std::vector<glm::mat4> &transforms)
 {
+	// update instance buffer with new transforms
 	glBindBuffer(GL_ARRAY_BUFFER, iVB);
 	glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(glm::mat4) * transforms.size(), transforms.data());
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
+// return the objects position
 glm::vec3 Object::getPosition()
 {
 	return this->m_position;

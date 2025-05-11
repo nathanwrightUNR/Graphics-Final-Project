@@ -51,6 +51,7 @@ bool Skybox::AddShader(GLenum ShaderType)
     }
     else if (ShaderType == GL_FRAGMENT_SHADER)
     {
+        // allows for setting emissiveness of skybox
         s = "#version 410\n\
             in vec3 texCoord; \
             out vec4 frag_color; \

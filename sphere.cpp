@@ -42,6 +42,7 @@ Sphere::Sphere(int prec, float angle, float scale, const char *tf, const char *n
     hasNmap = false;
 }
 
+// procedurally generate sphere, from class slides
 void Sphere::createVertices()
 {
   std::vector<glm::vec2> texCoords;

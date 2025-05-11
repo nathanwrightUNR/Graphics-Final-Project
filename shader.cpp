@@ -39,6 +39,15 @@ bool Shader::AddShader(GLenum ShaderType)
 
   if (ShaderType == GL_VERTEX_SHADER)
   {
+    /*
+     * vertex shader, which has inputs v_position, v_tc, v_normal and the imodelMatrix (instance model matrix)
+     * outputs to fragment shader: tc, varNorm, and frag_pos
+     * several uniforms for each matrix and the instanced flag
+     *
+     * in main, if its instanced use imodelMatrix, if not use its modelMatrix
+     * calculate vertex position, and pass uv's, normals and world-space position
+     * to fragment shader
+     */
     s = "#version 410\n \
           \
           layout (location = 0) in vec3 v_position; \
@@ -69,6 +78,22 @@ bool Shader::AddShader(GLenum ShaderType)
 
   else if (ShaderType == GL_FRAGMENT_SHADER)
   {
+    /*
+     * fragment shader, handles lighting and texturing
+     * inputs interpolated UVs, normals and world position. uses material and light uniforms
+     * if emissive, outputs glow texture * brightness
+     * else, computes ambient + diffuse + specular and applies texture if one is bound
+     *
+     * there is a material struct which has vec3 properties for ambient diffuse specular and shininess
+     * these are set in render for each object.
+     *
+     * there are several uniforms, for boolean flags, samplers and the light position and color.
+     * we also have a view position and an instance of a material mat. this was covered in the class slides.
+     * computes ambient (mat.ambient * light_color), diffuse (dot(norm, light_dir) * mat.diffuse * light_color),
+     * and specular (dot(view_dir, reflect_dir)^shininess * mat.specular * light_color);
+     * combines results and multiplies by base color (from texture if available).
+     * added functionality for if it is set emmissive to increase brightness.
+     */
     s = "#version 410\n \
           \
           struct material { \

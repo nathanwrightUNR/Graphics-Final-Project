@@ -152,14 +152,19 @@ bool Graphics::Initialize(int width, int height)
   glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
   // endof skybox rendering code
 
-  generateAsteroidTransforms(m_inner_asteroid_belt1, m_inner_asteroid_angles1, 200, 14.f, 250);
-  generateAsteroidTransforms(m_inner_asteroid_belt2, m_inner_asteroid_angles2, 200, 14.f, 250);
-  generateAsteroidTransforms(m_inner_asteroid_belt3, m_inner_asteroid_angles3, 200, 14.f, 250);
+  // # ====================================================================================== #
+  // generate astroid transforms for instanced objects
+  // with the belt and angle vectors, its num of instances radius, and span
+  generateAsteroidTransforms(m_inner_asteroid_belt1, 200, 14.f, 250);
+  generateAsteroidTransforms(m_inner_asteroid_belt2, 200, 14.f, 250);
+  generateAsteroidTransforms(m_inner_asteroid_belt3, 200, 14.f, 250);
 
+  // define astroids from 3 models
   m_inner_asteroid1 = new Mesh(glm::vec3(2.f, 3.f, -5.f),
                                "../assets/Asteroid/1132 T-3 Durech.obj",
                                "../assets/Planetary Textures/Haumea.jpg");
 
+  // call Instance to enable instancing
   m_inner_asteroid1->Instance(this->m_inner_asteroid_belt1);
 
   m_inner_asteroid2 = new Mesh(glm::vec3(2.f, 3.f, -5.f),
@@ -172,9 +177,9 @@ bool Graphics::Initialize(int width, int height)
                                "../assets/Asteroid/1998 DQ3 Durech.obj",
                                "../assets/Planetary Textures/Ceres.jpg");
 
-  generateAsteroidTransforms(m_outer_asteroid_belt1, m_outer_asteroid_angles1, 1000, 41.5f, 1200);
-  generateAsteroidTransforms(m_outer_asteroid_belt2, m_outer_asteroid_angles2, 1000, 41.5f, 1200);
-  generateAsteroidTransforms(m_outer_asteroid_belt3, m_outer_asteroid_angles3, 1000, 41.5f, 1200);
+  generateAsteroidTransforms(m_outer_asteroid_belt1, 1000, 41.5f, 1200);
+  generateAsteroidTransforms(m_outer_asteroid_belt2, 1000, 41.5f, 1200);
+  generateAsteroidTransforms(m_outer_asteroid_belt3, 1000, 41.5f, 1200);
 
   m_inner_asteroid3->Instance(this->m_inner_asteroid_belt3);
 
@@ -195,7 +200,9 @@ bool Graphics::Initialize(int width, int height)
                                "../assets/Planetary Textures/Ceres.jpg");
 
   m_outer_asteroid3->Instance(this->m_outer_asteroid_belt3);
+  // # ====================================================================================== #
 
+  // define celestial bodies, and traces with .obj, texture and normal maps, where applicible
   m_halleys = new Mesh(glm::vec3(2.f, 3.f, -5.f),
                        "../assets/Asteroid/Halley Giotto_Vega Stooke Model 1.obj",
                        "../assets/Planetary Textures/Neptune.jpg");
@@ -237,7 +244,7 @@ bool Graphics::Initialize(int width, int height)
 
   m_jupiter_trace = new Ring(64, 17.95, 18.05);
 
-  m_saturn = new Sphere(64, 225, 6.77f, "../assets/Planetary Textures/Saturn.jpg");
+  m_saturn = new Sphere(64, 225, 6.79f, "../assets/Planetary Textures/Saturn.jpg");
 
   m_saturn_trace = new Ring(64, 23.45, 23.55);
 
@@ -260,6 +267,8 @@ bool Graphics::Initialize(int width, int height)
 
   m_neptune_trace = new Ring(64, 38.45, 38.55);
 
+  // # ====================================================================================== #
+
   glEnable(GL_DEPTH_TEST);
   glDepthFunc(GL_LESS);
 
@@ -270,6 +279,10 @@ Camera *Graphics::getCamera() { return this->m_camera; }
 
 void Graphics::Update(double dt)
 {
+  // #========================================================================================
+  // following approach from prior assignments with hierarchical updates
+  // there is a ton of repeating code here, basically set its speed, dist, rotational vec,
+  // rotational speed and scale and do transforms in-place
   std::vector<float> speed, dist, rotSpeed, scale;
   glm::vec3 rotVector, orbital_pos;
 
@@ -336,7 +349,7 @@ void Graphics::Update(double dt)
   }
 
   // animate venus
-  speed = {0.06, 0., 0.06};
+  speed = {0.07, 0., 0.07};
   dist = {6.5, 0., 6.5};
   rotSpeed = {.3, .3, .3};
   scale = {.5, .5, .5};
@@ -375,6 +388,7 @@ void Graphics::Update(double dt)
   localTransform *= glm::rotate(glm::mat4(1.f), rotSpeed[0] * (float)dt, rotVector);
   localTransform *= glm::scale(glm::vec3(scale[0], scale[1], scale[2]));
 
+  // dont pop earth until moon is updated
   if (m_earth != NULL)
     m_earth->Update(localTransform);
 
@@ -385,9 +399,9 @@ void Graphics::Update(double dt)
     m_earth_trace->Update(trace_transform);
   }
 
-  // animate moon
+  // animate moon with earths translation as basis
   speed = {.2, 0., .2};
-  dist = {1.7, 0, 1.7};
+  dist = {1.9, 0, 1.9};
   rotVector = {0., 1., 0.};
   rotSpeed = {1., 1., 1.};
   scale = {.1, .1, .1};
@@ -405,6 +419,7 @@ void Graphics::Update(double dt)
   if (m_moon != NULL)
     m_moon->Update(localTransform);
 
+  // pop earth and moon since no more children
   this->modelStack.pop();
   this->modelStack.pop();
 
@@ -508,9 +523,10 @@ void Graphics::Update(double dt)
     m_saturn_ring->Update(localTransform);
 
   // animate uranus
+  // fun fact! orbits on its side
   speed = {0.01, 0., 0.01};
   dist = {30.5, 0., 30.5};
-  rotVector = {0., 1., 0.};
+  rotVector = {1., 0., 0.};
   rotSpeed = {0.3, 0.3, 0.3};
   scale = {.6, .6, .6};
 
@@ -519,6 +535,7 @@ void Graphics::Update(double dt)
   localTransform = this->modelStack.top();
   localTransform *= glm::translate(glm::mat4(1.f), orbital_pos);
   this->modelStack.push(localTransform);
+  localTransform *= glm::rotate(glm::mat4(1.f), glm::radians(90.0f), glm::vec3(0, 1, 0));
   localTransform *= glm::rotate(glm::mat4(1.f), rotSpeed[0] * (float)dt, rotVector);
   localTransform *= glm::scale(glm::vec3(scale[0], scale[1], scale[2]));
   this->modelStack.pop();
@@ -597,6 +614,7 @@ void Graphics::Update(double dt)
   if (m_eris != NULL)
     m_eris->Update(localTransform);
 
+  // update asteroid belt transforms (more on this later)
   updateAsteroidBelt(m_inner_asteroid_belt1, m_inner_asteroid1);
   updateAsteroidBelt(m_inner_asteroid_belt2, m_inner_asteroid2);
   updateAsteroidBelt(m_inner_asteroid_belt3, m_inner_asteroid3);
@@ -644,21 +662,37 @@ void Graphics::Render()
   // Start the correct program
   m_shader->Enable();
 
+  // get view matrix and camera pos by inverting view
   glm::mat4 view = m_camera->GetView();
   glm::vec3 view_pos = glm::vec3(glm::inverse(view)[3]);
 
+  // get light pos in world space (sun pos * its model mat)
   glm::vec4 light = m_sun->GetModel() * glm::vec4(0, 0, 0, 1);
+  // drow homogenious coord w
   glm::vec3 light_pos = glm::vec3(light);
 
+  // pass view and light pos to shader, set light color and is_emissive is generally false
+  // unless updated in certain renders
   glUniform3f(m_shader->GetUniformLocation("view_pos"), view_pos.x, view_pos.y, view_pos.z);
   glUniform3f(m_shader->GetUniformLocation("light_pos"), light_pos.x, light_pos.y, light_pos.z);
   glUniform3f(m_shader->GetUniformLocation("light_color"), 1.0f, 1.0f, 1.0f);
   glUniform1i(m_shader->GetUniformLocation("is_emissive"), false);
 
-  // Send in the projection and view to the shader (stay the same while camera intrinsic(perspective) and extrinsic (view) parameters are the same
+  // Send in the projection and view to the shader (stay the same while camera intrinsic(perspective)
+  // and extrinsic (view) parameters are the same
   glUniformMatrix4fv(m_projectionMatrix, 1, GL_FALSE, glm::value_ptr(m_camera->GetProjection()));
   glUniformMatrix4fv(m_viewMatrix, 1, GL_FALSE, glm::value_ptr(view));
 
+  // # =================================================================================== #
+  // repeated code time! if obj is not nulll, set its material uniforms in fragment shader
+  // as well as flags like `instanced` and `is_emissive`. adjust brightness if necessary
+  // then  get its model and normal matrices, transform surface normals with the inverse
+  // transpose, and update the matrices.
+
+  // then for each obj, check if it has its texture and normal map flags set, if so get the
+  // sampler and give it the active texture.
+
+  // finally render each obj
   if (m_sun != NULL)
   {
     SetMaterialUniforms(glm::vec3(1.0f), // ambient
@@ -709,6 +743,8 @@ void Graphics::Render()
     m_sun->Render(m_positionAttrib, m_colorAttrib, m_tcAttrib, m_hasTexture, m_NpAttrib, m_has_nmap);
   }
 
+  // starship is kind of unique, only render it if youre not orbiting a planet, and make it grey shiny!
+  // for all other non-instanced objects we follow the same approach as sun.
   if (m_starship != NULL && !oribing)
   {
     SetMaterialUniforms(glm::vec3(0.05f, 0.05f, 0.05f),
@@ -807,6 +843,7 @@ void Graphics::Render()
     m_mercury->Render(m_positionAttrib, m_colorAttrib, m_tcAttrib, m_hasTexture, m_NpAttrib, m_has_nmap);
   }
 
+  // for rendering traces, we dont use samplers but still need normal matrices to reflect/absob light
   if (m_mercury_trace != NULL)
   {
     SetMaterialUniforms(glm::vec3(0.2f),
@@ -825,12 +862,14 @@ void Graphics::Render()
     m_mercury_trace->Render(m_positionAttrib, m_colorAttrib, m_tcAttrib, m_hasTexture, m_NpAttrib, m_has_nmap);
   }
 
+  // couldnt figure out the particle effects, found halleys .obj and used neptunes texture to give it
+  // bright blue glow by making it emissive
   if (m_halleys != NULL)
   {
-    SetMaterialUniforms(glm::vec3(0.2f, 0.25f, 0.4f),
-                        glm::vec3(0.6f, 0.7f, 1.0f),
-                        glm::vec3(0.9f, 0.95f, 1.0f),
-                        64.0f);
+    SetMaterialUniforms(glm::vec3(0.2f),
+                        glm::vec3(1.0f),
+                        glm::vec3(0.4f),
+                        32.0f);
 
     glUniform1i(m_shader->GetUniformLocation("is_emissive"), true);
     glUniform1f(m_shader->GetUniformLocation("brightness"), 1.2f);
@@ -1587,6 +1626,10 @@ void Graphics::Render()
     m_eris->Render(m_positionAttrib, m_colorAttrib, m_tcAttrib, m_hasTexture, m_NpAttrib, m_has_nmap);
   }
 
+  // here we reached instanced rendering, so we set the instanced flag to true in the shader.
+  // follow previous steps and render the asteroid with its texture.
+
+  // repeat for other asteroids.
   if (m_inner_asteroid1 != NULL)
   {
     SetMaterialUniforms(glm::vec3(0.0f),
@@ -1776,6 +1819,7 @@ bool Graphics::collectShPrLocs()
     anyProblem = false;
   }
 
+  // Locate the normal matrix in the shader
   m_normalMatrix = m_shader->GetUniformLocation("normMatrix");
   if (m_normalMatrix == INVALID_UNIFORM_LOCATION)
   {
@@ -1839,6 +1883,7 @@ bool Graphics::collectShPrLocs()
     anyProblem = false;
   }
 
+  // get skybox view matrix
   m_skyboxViewMatrix = m_skybox->GetUniformLocation("v_matrix");
   if (m_skyboxViewMatrix == INVALID_UNIFORM_LOCATION)
   {
@@ -1846,6 +1891,7 @@ bool Graphics::collectShPrLocs()
     anyProblem = false;
   }
 
+  // get skybox position
   m_skyboxPositionAttrib = m_skybox->GetAttribLocation("position");
   if (m_skyboxPositionAttrib == INVALID_UNIFORM_LOCATION)
   {
@@ -1853,6 +1899,7 @@ bool Graphics::collectShPrLocs()
     anyProblem = false;
   }
 
+  // bool for has normal map associated with it, like hasTexture
   m_has_nmap = m_shader->GetUniformLocation("hasNormalMap");
   if (m_has_nmap == INVALID_UNIFORM_LOCATION)
   {
@@ -1983,49 +2030,73 @@ GLuint Graphics::skyboxCubeMap()
   return textureID;
 }
 
+/**
+ * @brief
+ *
+ * @param belt output vector passed by refernce to store transform matrices
+ * @param angles output vector passed by ref to store angles
+ * @param count // number of instances
+ * @param radius // where the instances should render (radially)
+ * @param span // variance in radius
+ */
 void Graphics::generateAsteroidTransforms(std::vector<glm::mat4> &belt,
-                                          std::vector<float> &angles,
                                           int count,
                                           float radius,
                                           int span)
 {
+  // clear prior data
   belt.clear();
-  angles.clear();
 
+  // for each instance...
   for (int i = 0; i < count; i++)
   {
-    float theta = glm::radians((float)(rand() % 360));
+    // calculate random theta and get its radians
+    // using float div for percision
+    float theta = glm::radians(((float)rand() / (float)RAND_MAX) * 360.0f);
+    // calculate r with base radius + random variance
     float r = radius + (float)(rand() % span) / 100.f;
 
+    // convert polar to cartesian
     float x = glm::cos(theta) * r;
     float z = glm::sin(theta) * r;
+    // add random y offset so it isnt such a disk from [-.5, .5]
     float y = ((rand() % 100) - 50) * 0.01f;
 
+    // transform = the translation matrix w cartesian coord
     glm::mat4 transform = glm::translate(glm::mat4(1.f), glm::vec3(x, y, z));
+    // rotate by random angle
     transform = glm::rotate(transform, glm::radians((float)(rand() % 360)), glm::vec3(0.f, 1.f, 0.f));
+    // scale to taste
     transform = glm::scale(transform, glm::vec3(0.1f));
 
+    // push to belt
     belt.push_back(transform);
-    angles.push_back(theta);
   }
 }
 
+// update transforms for animation
 void Graphics::updateAsteroidBelt(std::vector<glm::mat4> &belt, Object *asteroid)
 {
   for (auto &transform : belt)
   {
+    // get position from transform
     glm::vec3 pos = glm::vec3(transform[3]);
 
+    // convert to polar and add small rotation
     float r = glm::length(glm::vec2(pos.x, pos.z));
     float theta = glm::atan(pos.z, pos.x) + glm::radians(0.02f);
 
+    // convert new position back to cartesian
     float x = glm::cos(theta) * r;
     float z = glm::sin(theta) * r;
+    // height is unchanged
     float y = pos.y;
 
+    // translate to new pos, and reapply scale
     glm::mat4 updated = glm::translate(glm::mat4(1.f), glm::vec3(x, y, z));
     updated = glm::scale(updated, glm::vec3(0.1f));
 
+    // assign the updated matrix
     transform = updated;
   }
 
@@ -2034,29 +2105,40 @@ void Graphics::updateAsteroidBelt(std::vector<glm::mat4> &belt, Object *asteroid
 
 Object *Graphics::getClosestPlanet()
 {
+  // get camera position to compare distances
   glm::vec3 camera_pos = m_camera->GetPosition();
+  // make min REALLY big to start
   float min = FLT_MAX;
-  Object *closest_object;
+  // what will be returned
+  Object *closest_object = nullptr;
 
+  // orbitable objects
   std::vector<Object *> objects = {
       m_sun, m_mercury, m_venus, m_earth, m_moon, m_mars, m_ceres, m_jupiter,
       m_saturn, m_uranus, m_neptune, m_haumea, m_eris};
 
-  float max_dist = 5.f;
   for (Object *object : objects)
   {
+    // if obj has been instantiated
     if (!object)
       continue;
 
+    // get position from model matrix
     glm::vec3 pos = glm::vec3(object->GetModel()[3]);
+    // calculate distance from camera
     float dist = glm::distance(camera_pos, pos);
 
+    // if its closer than the current min...
     if (dist < min)
     {
+      // new min is the distance and closest obj is pointed to the current object
       min = dist;
       closest_object = object;
     }
   }
 
-  return (min < max_dist) ? closest_object : nullptr;
+  // we only want to enter orbit if we're nearby
+  // so if we dont meet the threshold we return nullptr
+  // (i promise its safe! i check...)
+  return (min < 5.f) ? closest_object : nullptr;
 }

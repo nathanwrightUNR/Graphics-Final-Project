@@ -13,28 +13,33 @@ public:
   glm::vec3 GetPosition();
   glm::mat4 GetView();
   void Update(float dt);
+
+  // get cameras front vector for ship cam
   glm::vec3 GetFront();
 
+  // boolean flags for callbacks and movement
   bool forward = false;
-  bool backward = false;
-  bool left = false;
-  bool right = false;
   bool zoom_in = false;
   bool zoom_out = false;
 
-  float fov = 40.0f;
-  float pitch = 0.0f;
+  // fov, pitch and yaw
+  float fov = 50.0f;
+  float base_fov = 50.0f;
+
+  float pitch = -15.0f;
   float yaw = -90.0f;
 
+  // camera poisition and vectors
   glm::vec3 position;
   glm::vec3 up;
   glm::vec3 camera_right;
   glm::vec3 camera_front;
   glm::vec3 camera_up;
 
-  float base_fov = 40.0f;
-
+  // function to set first person, reduces fov to zoom
   void SetFirstPerson(bool enable);
+
+  // setter for the view matrix, needed for observation mode
   void SetView(glm::mat4);
 
 private:

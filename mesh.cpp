@@ -57,21 +57,27 @@ bool Mesh::loadModelFromFile(const char *path)
 {
   std::string str = path;
   Assimp::Importer importer;
+
+  // load scene
   const aiScene *scene = importer.ReadFile(path, aiProcess_Triangulate);
 
+  // check for success
   if (!scene)
   {
     printf("couldn't open the .obj file. \n");
     return false;
   }
 
+  // loop through meshes
   for (int i = 0; i < scene->mNumMeshes; i++)
   {
     aiMesh *mesh = scene->mMeshes[i];
     int iMeshFaces = mesh->mNumFaces;
     for (int j = 0; j < iMeshFaces; j++)
     {
+      // loop through faces
       const aiFace &face = mesh->mFaces[j];
+      // for triangulation each face should have 3 indices
       for (int k = 0; k < 3; k++)
       {
         unsigned int index = face.mIndices[k];
@@ -81,6 +87,7 @@ bool Mesh::loadModelFromFile(const char *path)
 
         glm::vec2 texcoord;
 
+        // check for texture coordinates, and use if availible
         if (mesh->HasTextureCoords(0))
         {
           tex = mesh->mTextureCoords[0][index];
@@ -88,17 +95,21 @@ bool Mesh::loadModelFromFile(const char *path)
         }
         else
         {
+          // if not fallback to planar mapping from x and z
           texcoord = glm::vec2((pos.x + 1.0f) * 0.5f, (pos.z + 1.0f) * 0.5f);
         }
 
+        // poision and normal vectors
         glm::vec3 position(pos.x, pos.y, pos.z);
         glm::vec3 normal(norm.x, norm.y, norm.z);
 
+        // pushback the Vertex instance w pos, normal and texture coordinates
         this->Vertices.push_back(Vertex(position, normal, texcoord));
       }
     }
   }
 
+  // pushback indices
   for (unsigned int i = 0; i < Vertices.size(); ++i)
   {
     Indices.push_back(i);
@@ -107,6 +118,7 @@ bool Mesh::loadModelFromFile(const char *path)
   return true;
 }
 
+// default model to load
 void Mesh::createVertices()
 {
   this->loadModelFromFile("../assets/SpaceShip-1/SpaceShip-1.obj");

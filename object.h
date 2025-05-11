@@ -52,15 +52,18 @@ public:
    */
   glm::mat4 GetModel();
 
+  // flag for texture, and getter for id
   bool hasTex = false;
   GLuint getTextureID() { return m_texture ? m_texture->getTextureID() : 0; }
 
+  // flag for normal map, and getter for id
   bool hasNmap = false;
   GLuint getNormalMapID() { return m_normal_map ? m_normal_map->getTextureID() : 0; }
 
   // angle for rotation.
   float angle;
 
+  // base scale, used for orbital radius in observation mode
   float scale = 2.f;
 
 protected:
@@ -98,6 +101,7 @@ protected:
 
   glm::vec3 m_position = glm::vec3(0.f);
 
+  // instanced index buffer and othe instance information
   GLuint iVB = 0;
   int num_instances = 0;
   bool instanced = false;
